@@ -1,21 +1,17 @@
 # ElixirCqrsEsExample
 
-**TODO: Add description**
+This is the Elixir port of the [cqrs with erlang](https://github.com/bryanhunter/cqrs-with-erlang).
+
+I tried to understand how this system can be tested, so if you are interested about the testing take a look a the tests.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `elixir_cqrs_es_example` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:elixir_cqrs_es_example, "~> 0.1.0"}
-  ]
-end
+```
+mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/elixir_cqrs_es_example](https://hexdocs.pm/elixir_cqrs_es_example).
+## Run all tests
 
+```
+mix test
+```
