@@ -23,8 +23,11 @@ defmodule Bank.Account do
   end
 
   defp attempt_command({:create, id}, state) do
-    # TODO
-    # Continue from: https://github.com/bryanhunter/cqrs-with-erlang/blob/ndc-london/bank/src/bank_account.erl
+    event = %Bank.Events.AccountCreated{id: id, date_created: DateTime.utc_now()}
+    apply_new_event(event, state)
+  end
+
+  defp apply_new_event(_event, _state) do
     %{id: "Joe"}
   end
 end
