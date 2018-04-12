@@ -1,5 +1,5 @@
 defmodule Bank.Events do
   defmodule AccountCreated do
-    defstruct [:id, :date_created]
+    defstruct [:id]
   end
 end
