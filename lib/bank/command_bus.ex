@@ -5,6 +5,10 @@ defmodule Bank.CommandBus do
     GenServer.start_link(__MODULE__, [], name: :command_bus)
   end
 
+  def init(args) do
+    {:ok, args}
+  end
+
   def subscribe(subscriber_pid) do
     GenServer.call(:command_bus, subscriber_pid)
   end
