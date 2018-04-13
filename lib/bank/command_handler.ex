@@ -14,7 +14,8 @@ defmodule Bank.CommandHandler do
   end
 
   def handle_call(command = %CreateAccount{}, _pid, nil) do
-    {:ok, pid} = Account.create(command.id)
+    {:ok, pid} = Account.new
+    Account.create(pid, command.id)
 
     {:ok, _version} = EventStore.append_to_stream(command.id, -1, Account.changes(pid))
 
