@@ -18,6 +18,7 @@ mix test
 
 ## Questions & TODOs
 
+- How to handle concurrent issue in the `EventStore.append_to_stream`?
 - When handle the `deposit_money` command we should check if the `account` process is running
 - When to flush all the `changes` of the `Account`?
 - When to use a `Service`? Should the `command_handler` deal with a `BankService`?
