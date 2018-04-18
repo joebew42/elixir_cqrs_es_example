@@ -3,9 +3,9 @@ defmodule Bank.CommandHandlerTest do
 
   import Mock
 
-  alias Bank.Commands.CreateAccount
-  alias Bank.Events.AccountCreated
-  alias Bank.EventStore
+  alias Bank.Commands.{CreateAccount, DepositMoney}
+  alias Bank.Events.{AccountCreated, MoneyDeposited}
+  alias Bank.{EventStore, EventStream}
 
   setup_all do
     {:ok, _pid} = start_supervised Bank.CommandHandler
@@ -17,6 +17,17 @@ defmodule Bank.CommandHandlerTest do
       GenServer.call(:command_handler, %CreateAccount{id: "Joe"})
 
       assert called EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
+    end
+  end
+
+  test "deposit money to an existing account" do
+    with_mock EventStore,
+      [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
+       append_to_stream: fn(_, _, _) -> {:ok, 0} end]
+    do
+      GenServer.call(:command_handler, %DepositMoney{id: "Joe", amount: 100})
+
+      assert called EventStore.append_to_stream("Joe", 0, [%MoneyDeposited{id: "Joe", amount: 100}])
     end
   end
 end
