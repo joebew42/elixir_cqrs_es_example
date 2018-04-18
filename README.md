@@ -19,3 +19,4 @@ mix test
 ## Questions
 
 - When to flush all the `changes` of the `Account`?
+- When to use a `Service`? Should the `command_handler` deal with a `BankService`?
