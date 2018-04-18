@@ -15,3 +15,7 @@ mix deps.get
 ```
 mix test
 ```
+
+## Questions
+
+- When to flush all the `changes` of the `Account`?
