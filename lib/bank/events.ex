@@ -6,4 +6,8 @@ defmodule Bank.Events do
   defmodule MoneyDeposited do
     defstruct [:id, :amount]
   end
+
+  defmodule MoneyWithdrawalDeclined do
+    defstruct [:id, :amount]
+  end
 end

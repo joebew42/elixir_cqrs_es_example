@@ -6,4 +6,8 @@ defmodule Bank.Commands do
   defmodule DepositMoney do
     defstruct [:id, :amount]
   end
+
+  defmodule WithdrawMoney do
+    defstruct [:id, :amount]
+  end
 end

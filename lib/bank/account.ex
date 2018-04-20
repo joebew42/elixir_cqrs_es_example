@@ -1,7 +1,7 @@
 defmodule Bank.Account do
   defstruct id: nil, amount: 0, changes: []
 
-  alias Bank.Events.{AccountCreated, MoneyDeposited}
+  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined}
   alias Bank.EventStream
 
   def new() do
@@ -15,6 +15,10 @@ defmodule Bank.Account do
 
   def deposit(pid, amount) do
     send pid, {:attempt_command, {:deposit, amount}}
+  end
+
+  def withdraw(pid, amount) do
+    send pid, {:attempt_command, {:withdraw, amount}}
   end
 
   def load_from_event_stream(pid, %EventStream{version: _version, events: events}) do
@@ -58,6 +62,12 @@ defmodule Bank.Account do
     {:ok, new_state}
   end
 
+  defp handle({:withdraw, amount}, state) do
+    event = %MoneyWithdrawalDeclined{id: state.id, amount: amount}
+    new_state = apply_new_event(event, state)
+    {:ok, new_state}
+  end
+
   defp handle(_, state), do: {:ok, state}
 
   defp apply_new_event(event, state) do
@@ -72,6 +82,8 @@ defmodule Bank.Account do
   defp apply_event(%MoneyDeposited{amount: deposited_amount}, state) do
     %__MODULE__{state | amount: state.amount + deposited_amount}
   end
+
+  defp apply_event(_event, state), do: state
 
   defp apply_many_events(events, state) do
     events
