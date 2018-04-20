@@ -30,4 +30,10 @@ defmodule Bank.CommandHandlerTest do
       assert called EventStore.append_to_stream("Joe", 0, [%MoneyDeposited{id: "Joe", amount: 100}])
     end
   end
+
+  describe "withdrawn money to an existing amount" do
+    test "### declined operation due insufficient funds ###" do
+      assert false
+    end
+  end
 end
