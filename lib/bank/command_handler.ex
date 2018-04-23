@@ -17,7 +17,7 @@ defmodule Bank.CommandHandler do
     {:ok, pid} = Account.new
     Account.create(pid, command.id)
 
-    {:ok, _version} = EventStore.append_to_stream(command.id, -1, Account.changes(pid))
+    {:ok} = EventStore.append_to_stream(command.id, -1, Account.changes(pid))
 
     {:reply, :ok, nil}
   end
@@ -29,7 +29,7 @@ defmodule Bank.CommandHandler do
     Account.load_from_event_stream(pid, event_stream)
     Account.deposit(pid, command.amount)
 
-    {:ok, _version} = EventStore.append_to_stream(command.id, event_stream.version, Account.changes(pid))
+    {:ok} = EventStore.append_to_stream(command.id, event_stream.version, Account.changes(pid))
 
     {:reply, :ok, nil}
   end
@@ -41,7 +41,7 @@ defmodule Bank.CommandHandler do
     Account.load_from_event_stream(pid, event_stream)
     Account.withdraw(pid, command.amount)
 
-    {:ok, _version} = EventStore.append_to_stream(command.id, event_stream.version, Account.changes(pid))
+    {:ok} = EventStore.append_to_stream(command.id, event_stream.version, Account.changes(pid))
 
     {:reply, :ok, nil}
   end
