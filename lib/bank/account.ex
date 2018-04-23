@@ -87,7 +87,13 @@ defmodule Bank.Account do
     %__MODULE__{state | amount: state.amount + deposited_amount}
   end
 
-  defp apply_event(_event, state), do: state
+  defp apply_event(%MoneyWithdrawalDeclined{}, state) do
+    state
+  end
+
+  defp apply_event(%MoneyWithdrawn{amount: withdrawn_amount}, state) do
+    %__MODULE__{state | amount: state.amount - withdrawn_amount}
+  end
 
   defp apply_many_events(events, state) do
     events
