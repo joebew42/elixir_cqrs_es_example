@@ -14,7 +14,7 @@ defmodule Bank.CommandHandlerTest do
 
   test "create an account when does not exists" do
     with_mock(EventStore, [append_to_stream: fn(_, _, _) -> {:ok} end]) do
-      GenServer.call(:command_handler, %CreateAccount{id: "Joe"})
+      send_command(%CreateAccount{id: "Joe"})
 
       assert called EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
     end
@@ -25,7 +25,7 @@ defmodule Bank.CommandHandlerTest do
       [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
        append_to_stream: fn(_, _, _) -> {:ok} end]
     do
-      GenServer.call(:command_handler, %DepositMoney{id: "Joe", amount: 100})
+      send_command(%DepositMoney{id: "Joe", amount: 100})
 
       assert called EventStore.append_to_stream("Joe", 0, [%MoneyDeposited{id: "Joe", amount: 100}])
     end
@@ -37,7 +37,7 @@ defmodule Bank.CommandHandlerTest do
         [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
          append_to_stream: fn(_, _, _) -> {:ok} end]
       do
-        GenServer.call(:command_handler, %WithdrawMoney{id: "Joe", amount: 100})
+        send_command(%WithdrawMoney{id: "Joe", amount: 100})
 
         assert called EventStore.append_to_stream("Joe", 0, [%MoneyWithdrawalDeclined{id: "Joe", amount: 100}])
       end
@@ -48,10 +48,12 @@ defmodule Bank.CommandHandlerTest do
         [load_event_stream: fn(_) -> {:ok, %EventStream{version: 1, events: [%MoneyDeposited{id: "Joe", amount: 100}, %AccountCreated{id: "Joe"}]}} end,
          append_to_stream: fn(_, _, _) -> {:ok} end]
       do
-        GenServer.call(:command_handler, %WithdrawMoney{id: "Joe", amount: 100})
+        send_command(%WithdrawMoney{id: "Joe", amount: 100})
 
         assert called EventStore.append_to_stream("Joe", 1, [%MoneyWithdrawn{id: "Joe", amount: 100}])
       end
     end
   end
+
+  defp send_command(command), do: GenServer.call(:command_handler, command)
 end
