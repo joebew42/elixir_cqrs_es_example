@@ -10,4 +10,8 @@ defmodule Bank.Events do
   defmodule MoneyWithdrawalDeclined do
     defstruct [:id, :amount]
   end
+
+  defmodule MoneyWithdrawn do
+    defstruct [:id, :amount]
+  end
 end

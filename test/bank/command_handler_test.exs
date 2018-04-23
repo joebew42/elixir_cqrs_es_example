@@ -4,7 +4,7 @@ defmodule Bank.CommandHandlerTest do
   import Mock
 
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined}
+  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
   alias Bank.{EventStore, EventStream}
 
   setup_all do
@@ -40,6 +40,17 @@ defmodule Bank.CommandHandlerTest do
         GenServer.call(:command_handler, %WithdrawMoney{id: "Joe", amount: 100})
 
         assert called EventStore.append_to_stream("Joe", 0, [%MoneyWithdrawalDeclined{id: "Joe", amount: 100}])
+      end
+    end
+
+    test "should accept operation due sufficient funds" do
+      with_mock EventStore,
+        [load_event_stream: fn(_) -> {:ok, %EventStream{version: 1, events: [%MoneyDeposited{id: "Joe", amount: 100}, %AccountCreated{id: "Joe"}]}} end,
+         append_to_stream: fn(_, _, _) -> {:ok, 1} end]
+      do
+        GenServer.call(:command_handler, %WithdrawMoney{id: "Joe", amount: 100})
+
+        assert called EventStore.append_to_stream("Joe", 1, [%MoneyWithdrawn{id: "Joe", amount: 100}])
       end
     end
   end

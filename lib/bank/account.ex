@@ -1,7 +1,7 @@
 defmodule Bank.Account do
   defstruct id: nil, amount: 0, changes: []
 
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined}
+  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
   alias Bank.EventStream
 
   def new() do
@@ -63,7 +63,11 @@ defmodule Bank.Account do
   end
 
   defp handle({:withdraw, amount}, state) do
-    event = %MoneyWithdrawalDeclined{id: state.id, amount: amount}
+    new_amount = state.amount - amount
+    event = case new_amount >= 0 do
+      true -> %MoneyWithdrawn{id: state.id, amount: amount}
+      false -> %MoneyWithdrawalDeclined{id: state.id, amount: amount}
+    end
     new_state = apply_new_event(event, state)
     {:ok, new_state}
   end
