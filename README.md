@@ -18,6 +18,7 @@ mix test
 
 ## Questions & TODOs
 
+- Introduce an `Accounts` that will act as a repository for `Account`
 - How to handle concurrent issue in the `EventStore.append_to_stream`?
 - When handle the `deposit_money` command we should check if the `account` process is running
 - When to flush all the `changes` of the `Account`?
