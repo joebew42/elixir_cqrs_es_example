@@ -12,11 +12,21 @@ defmodule Bank.CommandHandlerTest do
     :ok
   end
 
-  test "create an account when does not exists" do
+  test "create an account when it does not exist" do
     with_mock(EventStore, [append_to_stream: fn(_, _, _) -> {:ok} end]) do
       send_command(%CreateAccount{id: "Joe"})
 
       assert called EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
+    end
+  end
+
+  test "does not create an account when it already exists" do
+    send_command(%CreateAccount{id: "Joe"})
+
+    with_mock(EventStore, [append_to_stream: fn(_, _, _) -> {:ok} end]) do
+      send_command(%CreateAccount{id: "Joe"})
+
+      assert refute EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
     end
   end
 
