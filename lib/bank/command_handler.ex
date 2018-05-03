@@ -14,10 +14,15 @@ defmodule Bank.CommandHandler do
   end
 
   def handle_call(command = %CreateAccount{}, _pid, nil) do
-    {:ok, pid} = Account.new
-    Account.create(pid, command.id)
+    case EventStore.load_event_stream(command.id) do
+      {:error, :not_found} ->
+        {:ok, pid} = Account.new
+        Account.create(pid, command.id)
 
-    {:ok} = EventStore.append_to_stream(command.id, -1, Account.changes(pid))
+        EventStore.append_to_stream(command.id, -1, Account.changes(pid))
+      {:ok, _event_stream} ->
+        {:ok}
+    end
 
     {:reply, :ok, nil}
   end
