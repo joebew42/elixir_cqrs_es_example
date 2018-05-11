@@ -5,35 +5,20 @@ defmodule Bank.CommandHandlerTest do
 
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
   alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
-  alias Bank.{EventStore, EventStream}
+  alias Bank.{EventStore, EventStream, Accounts}
 
   setup_all do
     {:ok, _pid} = start_supervised Bank.CommandHandler
     :ok
   end
 
-  test "create an account when it does not exist" do
-    with_mock EventStore,
-     [load_event_stream: fn(_) -> {:error, :not_found} end,
-      append_to_stream: fn(_, _, _) -> {:ok} end]
-    do
-      send_command(%CreateAccount{id: "Joe"})
+  describe "on create account command" do
+    test "an account is created" do
+      with_mock Accounts, [create_account: fn(_) -> :ok end] do
+        send_command(%CreateAccount{id: "Joe"})
 
-      assert called EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
-    end
-  end
-
-  test "does not create an account when it already exists" do
-    send_command(%CreateAccount{id: "Joe"})
-
-    with_mock EventStore,
-      [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
-       append_to_stream: fn(_, _, _) -> {:ok} end]
-    do
-      send_command(%CreateAccount{id: "Joe"})
-
-      assert called EventStore.load_event_stream("Joe")
-      assert not called EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
+        assert called Accounts.create_account("Joe")
+      end
     end
   end
 

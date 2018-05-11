@@ -3,7 +3,7 @@ defmodule Bank.CommandHandler do
 
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
   alias Bank.EventStore
-  alias Bank.Account
+  alias Bank.{Accounts, Account}
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: :command_handler)
@@ -13,18 +13,8 @@ defmodule Bank.CommandHandler do
     {:ok, nil}
   end
 
-  def handle_call(command = %CreateAccount{}, _pid, nil) do
-    case EventStore.load_event_stream(command.id) do
-      {:error, :not_found} ->
-        {:ok, pid} = Account.new
-        Account.create(pid, command.id)
-
-        EventStore.append_to_stream(command.id, -1, Account.changes(pid))
-      {:ok, _event_stream} ->
-        {:ok}
-    end
-
-    {:reply, :ok, nil}
+  def handle_call(%CreateAccount{id: name}, _pid, nil) do
+    {:reply, Accounts.create_account(name), nil}
   end
 
   def handle_call(command = %DepositMoney{}, _pid, nil) do
