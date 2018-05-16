@@ -16,4 +16,16 @@ defmodule Bank.Accounts do
 
     :ok
   end
+
+  def deposit_money(name, amount) do
+    {:ok, event_stream} = EventStore.load_event_stream(name)
+
+    {:ok, pid} = Account.new
+    Account.load_from_event_stream(pid, event_stream)
+    Account.deposit(pid, amount)
+
+    {:ok} = EventStore.append_to_stream(name, event_stream.version, Account.changes(pid))
+
+    :ok
+  end
 end

@@ -22,14 +22,11 @@ defmodule Bank.CommandHandlerTest do
     end
   end
 
-  test "deposit money to an existing account" do
-    with_mock EventStore,
-      [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
-       append_to_stream: fn(_, _, _) -> {:ok} end]
-    do
+  test "deposit money to an account" do
+    with_mock Accounts, [deposit_money: fn(_, _) -> :ok end] do
       send_command(%DepositMoney{id: "Joe", amount: 100})
 
-      assert called EventStore.append_to_stream("Joe", 0, [%MoneyDeposited{id: "Joe", amount: 100}])
+      assert called Accounts.deposit_money("Joe", 100)
     end
   end
 

@@ -17,16 +17,8 @@ defmodule Bank.CommandHandler do
     {:reply, Accounts.create_account(name), nil}
   end
 
-  def handle_call(command = %DepositMoney{}, _pid, nil) do
-    {:ok, event_stream} = EventStore.load_event_stream(command.id)
-
-    {:ok, pid} = Account.new
-    Account.load_from_event_stream(pid, event_stream)
-    Account.deposit(pid, command.amount)
-
-    {:ok} = EventStore.append_to_stream(command.id, event_stream.version, Account.changes(pid))
-
-    {:reply, :ok, nil}
+  def handle_call(%DepositMoney{id: name, amount: amount}, _pid, nil) do
+    {:reply, Accounts.deposit_money(name, amount), nil}
   end
 
   def handle_call(command = %WithdrawMoney{}, _pid, nil) do
