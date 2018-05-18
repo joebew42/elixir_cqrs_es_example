@@ -2,8 +2,7 @@ defmodule Bank.CommandHandler do
   use GenServer
 
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
-  alias Bank.EventStore
-  alias Bank.{Accounts, Account}
+  alias Bank.Accounts
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: :command_handler)
