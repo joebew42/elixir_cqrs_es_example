@@ -4,8 +4,7 @@ defmodule Bank.CommandHandlerTest do
   import Mock
 
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
-  alias Bank.{EventStore, EventStream, Accounts}
+  alias Bank.Accounts
 
   setup_all do
     {:ok, _pid} = start_supervised Bank.CommandHandler
@@ -32,26 +31,12 @@ defmodule Bank.CommandHandlerTest do
     end
   end
 
-  describe "withdrawn money to an existing amount" do
-    test "should decline operation due to insufficient funds" do
-      with_mock EventStore,
-        [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
-         append_to_stream: fn(_, _, _) -> {:ok} end]
-      do
+  describe "on withdraw money command" do
+    test "an amount is withdrawn" do
+      with_mock Accounts, [withdraw_money: fn(_, _) -> :ok end] do
         send_command(%WithdrawMoney{id: "Joe", amount: 100})
 
-        assert called EventStore.append_to_stream("Joe", 0, [%MoneyWithdrawalDeclined{id: "Joe", amount: 100}])
-      end
-    end
-
-    test "should accept operation due sufficient funds" do
-      with_mock EventStore,
-        [load_event_stream: fn(_) -> {:ok, %EventStream{version: 1, events: [%MoneyDeposited{id: "Joe", amount: 100}, %AccountCreated{id: "Joe"}]}} end,
-         append_to_stream: fn(_, _, _) -> {:ok} end]
-      do
-        send_command(%WithdrawMoney{id: "Joe", amount: 100})
-
-        assert called EventStore.append_to_stream("Joe", 1, [%MoneyWithdrawn{id: "Joe", amount: 100}])
+        assert called Accounts.withdraw_money("Joe", 100)
       end
     end
   end
