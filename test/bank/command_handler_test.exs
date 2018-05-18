@@ -22,11 +22,13 @@ defmodule Bank.CommandHandlerTest do
     end
   end
 
-  test "deposit money to an account" do
-    with_mock Accounts, [deposit_money: fn(_, _) -> :ok end] do
-      send_command(%DepositMoney{id: "Joe", amount: 100})
+  describe "on deposit money command" do
+    test "an amount is deposited" do
+      with_mock Accounts, [deposit_money: fn(_, _) -> :ok end] do
+        send_command(%DepositMoney{id: "Joe", amount: 100})
 
-      assert called Accounts.deposit_money("Joe", 100)
+        assert called Accounts.deposit_money("Joe", 100)
+      end
     end
   end
 
