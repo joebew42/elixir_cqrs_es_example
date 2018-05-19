@@ -1,30 +1,26 @@
 defmodule Bank.BankService do
 
   alias Bank.EventStore
-  alias Bank.Account
+  alias Bank.{AccountRepository, Account}
 
   def create_account(name) do
-    case EventStore.load_event_stream(name) do
+    case AccountRepository.find_by_id(name) do
+      {:ok, _pid} ->
+        :ok
       {:error, :not_found} ->
-        {:ok, pid} = Account.new
-        Account.create(pid, name)
-
-        EventStore.append_to_stream(name, -1, Account.changes(pid))
-      {:ok, _event_stream} ->
-        nil
+        {:ok, pid} = Account.new(name)
+        AccountRepository.save(name)
+        :ok
     end
-
-    :ok
   end
 
   def deposit_money(name, amount) do
     {:ok, event_stream} = EventStore.load_event_stream(name)
 
-    {:ok, pid} = Account.new
-    Account.load_from_event_stream(pid, event_stream)
+    {:ok, pid} = Account.load_from_event_stream(event_stream)
     Account.deposit(pid, amount)
 
-    {:ok} = EventStore.append_to_stream(name, event_stream.version, Account.changes(pid))
+    :ok = EventStore.append_to_stream(Account.changes(pid))
 
     :ok
   end
@@ -32,11 +28,10 @@ defmodule Bank.BankService do
   def withdraw_money(name, amount) do
     {:ok, event_stream} = EventStore.load_event_stream(name)
 
-    {:ok, pid} = Account.new
-    Account.load_from_event_stream(pid, event_stream)
+    {:ok, pid} = Account.load_from_event_stream(event_stream)
     Account.withdraw(pid, amount)
 
-    {:ok} = EventStore.append_to_stream(name, event_stream.version, Account.changes(pid))
+    :ok = EventStore.append_to_stream(Account.changes(pid))
 
     :ok
   end

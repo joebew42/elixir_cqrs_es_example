@@ -1,16 +1,15 @@
 defmodule Bank.Account do
-  defstruct id: nil, amount: 0, changes: []
-
   alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
   alias Bank.EventStream
 
-  def new() do
-    pid = spawn(__MODULE__, :loop, [%__MODULE__{}])
-    {:ok, pid}
+  defstruct id: nil, amount: 0, changes: %EventStream{}
+
+  def new(id) do
+    spawn_with {:attempt_command, {:create, id}}
   end
 
-  def create(pid, id) do
-    send pid, {:attempt_command, {:create, id}}
+  def load_from_event_stream(event_stream = %EventStream{}) do
+    spawn_with {:load_from, event_stream}
   end
 
   def deposit(pid, amount) do
@@ -21,12 +20,8 @@ defmodule Bank.Account do
     send pid, {:attempt_command, {:withdraw, amount}}
   end
 
-  def load_from_event_stream(pid, %EventStream{version: _version, events: events}) do
-    send pid, {:load_from, events}
-  end
-
   def changes(pid) do
-    send pid, {:attempt_query, {:changes, self()}}
+    send pid, {:changes, self()}
     receive do
       {:ok, changes} -> changes
     end
@@ -34,20 +29,26 @@ defmodule Bank.Account do
 
   def loop(state) do
     receive do
-      {:attempt_query, {query, from}} ->
-        handle(query, from, state)
-        loop(state)
       {:attempt_command, command} ->
         {:ok, new_state} = handle(command, state)
         loop(new_state)
-      {:load_from, events} ->
-        new_state = apply_many_events(events, state)
+      {:load_from, event_stream} ->
+        new_state = apply_many_events(event_stream.events, state)
         loop(new_state)
+      {:changes, from} ->
+        send from, {:ok, changes_from(state)}
+        loop(state)
     end
   end
 
-  defp handle(:changes, from, state) do
-    send from, {:ok, state.changes}
+  defp spawn_with(message) do
+    pid = spawn(__MODULE__, :loop, [%__MODULE__{}])
+    send pid, message
+    {:ok, pid}
+  end
+
+  defp changes_from(%__MODULE__{id: id, changes: changes}) do
+    %EventStream{changes | id: id}
   end
 
   defp handle({:create, id}, state) do
@@ -76,7 +77,12 @@ defmodule Bank.Account do
 
   defp apply_new_event(event, state) do
     new_state = apply_event(event, state)
-    %__MODULE__{new_state | changes: [event|state.changes]}
+    changes = %EventStream{
+      version: state.changes.version + 1,
+      events: [event|state.changes.events]
+    }
+
+    %__MODULE__{new_state | changes: changes}
   end
 
   defp apply_event(%AccountCreated{id: id}, state) do
