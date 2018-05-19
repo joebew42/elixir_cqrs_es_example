@@ -1,4 +1,4 @@
-defmodule Bank.AccountsTest do
+defmodule Bank.BankServiceTest do
   use ExUnit.Case, async: true
 
   import Mock
@@ -6,14 +6,14 @@ defmodule Bank.AccountsTest do
   alias Bank.{EventStore, EventStream}
   alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
 
-  alias Bank.Accounts
+  alias Bank.BankService
 
   test "does not create an account if it already exist" do
     with_mock EventStore,
       [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
        append_to_stream: fn(_, _, _) -> {:ok} end]
     do
-      :ok = Accounts.create_account("Joe")
+      :ok = BankService.create_account("Joe")
 
       assert called EventStore.load_event_stream("Joe")
       assert not called EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
@@ -25,7 +25,7 @@ defmodule Bank.AccountsTest do
      [load_event_stream: fn(_) -> {:error, :not_found} end,
       append_to_stream: fn(_, _, _) -> {:ok} end]
     do
-      :ok = Accounts.create_account("Joe")
+      :ok = BankService.create_account("Joe")
 
       assert called EventStore.append_to_stream("Joe", -1, [%AccountCreated{id: "Joe"}])
     end
@@ -36,7 +36,7 @@ defmodule Bank.AccountsTest do
       [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
        append_to_stream: fn(_, _, _) -> {:ok} end]
     do
-      :ok = Accounts.deposit_money("Joe", 100)
+      :ok = BankService.deposit_money("Joe", 100)
 
       assert called EventStore.append_to_stream("Joe", 0, [%MoneyDeposited{id: "Joe", amount: 100}])
     end
@@ -48,7 +48,7 @@ defmodule Bank.AccountsTest do
         [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
          append_to_stream: fn(_, _, _) -> {:ok} end]
       do
-        :ok = Accounts.withdraw_money("Joe", 100)
+        :ok = BankService.withdraw_money("Joe", 100)
 
         assert called EventStore.append_to_stream("Joe", 0, [%MoneyWithdrawalDeclined{id: "Joe", amount: 100}])
       end
@@ -59,7 +59,7 @@ defmodule Bank.AccountsTest do
         [load_event_stream: fn(_) -> {:ok, %EventStream{version: 1, events: [%MoneyDeposited{id: "Joe", amount: 100}, %AccountCreated{id: "Joe"}]}} end,
          append_to_stream: fn(_, _, _) -> {:ok} end]
       do
-        :ok = Accounts.withdraw_money("Joe", 100)
+        :ok = BankService.withdraw_money("Joe", 100)
 
         assert called EventStore.append_to_stream("Joe", 1, [%MoneyWithdrawn{id: "Joe", amount: 100}])
       end

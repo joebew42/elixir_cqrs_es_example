@@ -1,4 +1,4 @@
-defmodule Bank.Accounts do
+defmodule Bank.BankService do
 
   alias Bank.EventStore
   alias Bank.Account

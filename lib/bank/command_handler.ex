@@ -2,7 +2,7 @@ defmodule Bank.CommandHandler do
   use GenServer
 
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
-  alias Bank.Accounts
+  alias Bank.BankService
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: :command_handler)
@@ -13,14 +13,14 @@ defmodule Bank.CommandHandler do
   end
 
   def handle_call(%CreateAccount{id: name}, _pid, nil) do
-    {:reply, Accounts.create_account(name), nil}
+    {:reply, BankService.create_account(name), nil}
   end
 
   def handle_call(%DepositMoney{id: name, amount: amount}, _pid, nil) do
-    {:reply, Accounts.deposit_money(name, amount), nil}
+    {:reply, BankService.deposit_money(name, amount), nil}
   end
 
   def handle_call(%WithdrawMoney{id: name, amount: amount}, _pid, nil) do
-    {:reply, Accounts.withdraw_money(name, amount), nil}
+    {:reply, BankService.withdraw_money(name, amount), nil}
   end
 end
