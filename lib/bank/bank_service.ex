@@ -8,7 +8,7 @@ defmodule Bank.BankService do
       {:ok, _pid} ->
         :ok
       {:error, :not_found} ->
-        {:ok, pid} = Account.new(name)
+        {:ok, _pid} = Account.new(name)
         AccountRepository.save(name)
         :ok
     end

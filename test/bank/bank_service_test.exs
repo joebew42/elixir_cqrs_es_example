@@ -18,7 +18,7 @@ defmodule Bank.BankServiceTest do
     end
   end
 
-  test "create an account when it does not exist - new" do
+  test "create an account when it does not exist" do
     with_mock AccountRepository,
       [find_by_id: fn(_) -> {:error, :not_found} end,
        save: fn(_) -> :ok end]
