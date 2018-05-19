@@ -11,9 +11,6 @@ defmodule Bank.AccountRepository do
   end
 
   def save(id) do
-    changes = Account.changes(id)
-    :ok = EventStore.append_to_stream(changes)
-
-    :ok
+    :ok = EventStore.append_to_stream(Account.changes(id))
   end
 end
