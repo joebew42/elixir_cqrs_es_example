@@ -19,6 +19,7 @@ mix test
 ## DOING
 
 - Introduce an `AccountRepository` that will act as a repository for `Account`, and it will be used by the `BankService`
+  - Move the withdrawn out of the BankService
 
 ## Questions & TODOs
 
