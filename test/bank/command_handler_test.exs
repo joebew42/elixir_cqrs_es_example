@@ -6,11 +6,6 @@ defmodule Bank.CommandHandlerTest do
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
   alias Bank.BankService
 
-  setup_all do
-    {:ok, _pid} = start_supervised Bank.CommandHandler
-    :ok
-  end
-
   describe "on create account command" do
     test "an account is created" do
       with_mock BankService, [create_account: fn(_) -> :ok end] do
