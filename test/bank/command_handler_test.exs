@@ -36,5 +36,9 @@ defmodule Bank.CommandHandlerTest do
     end
   end
 
+  test "return an error for unknown commands" do
+    assert send_command(:a_not_handled_command) == {:error, :unknown_command}
+  end
+
   defp send_command(command), do: GenServer.call(:command_handler, command)
 end

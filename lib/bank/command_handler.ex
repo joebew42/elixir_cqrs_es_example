@@ -9,6 +9,7 @@ defmodule Bank.CommandHandler do
   end
 
   def init(nil) do
+    Bank.CommandBus.subscribe(self())
     {:ok, nil}
   end
 
@@ -22,5 +23,9 @@ defmodule Bank.CommandHandler do
 
   def handle_call(%WithdrawMoney{id: name, amount: amount}, _pid, nil) do
     {:reply, BankService.withdraw_money(name, amount), nil}
+  end
+
+  def handle_call(_unknown_command, _pid, nil) do
+    {:reply, {:error, :unknown_command}, nil}
   end
 end
