@@ -8,7 +8,7 @@ defmodule Bank.BankService do
       {:ok, _pid} ->
         :ok
       {:error, :not_found} ->
-        {:ok, _pid} = Account.new(name) # how to document this collaboration with a test?
+        # {:ok, _pid} = Account.new(name) # how to document this collaboration with a test?
         AccountRepository.save(name)
         :ok
     end
