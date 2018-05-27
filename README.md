@@ -23,6 +23,7 @@ mix test
 
 ## Questions & TODOs
 
+- Should the `CommandHandler` return errors?
 - `Account` may be able to create named processes, so that we can easily identiy `Account`s by their names intead of `pid`s
 - `Bank` will act as a client that will send commands
 - How to handle concurrent issue in the `EventStore.append_to_stream`?
