@@ -23,6 +23,7 @@ mix test
 
 ## Questions & TODOs
 
+- Implement the `EventStore`
 - We may have to introduce an `EventBus`
 - Should the `CommandHandler` return errors?
 - `Account` may be able to create named processes, so that we can easily identiy `Account`s by their names intead of `pid`s
