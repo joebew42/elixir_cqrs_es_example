@@ -1,4 +1,4 @@
-defmodule Bank.UATTest do
+defmodule Bank.AcceptanceTest do
   use ExUnit.Case, async: true
 
   alias Bank.Client
