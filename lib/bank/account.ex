@@ -14,9 +14,15 @@ defmodule Bank.Account do
     start_with(id, {:load_from, event_stream})
   end
 
-  def init(args) do
-    {:ok, args}
+  defp start_with(id, message) do
+    {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{}, name: via_registry(id))
+    send pid, message
+    {:ok, id}
   end
+
+  defp via_registry(id), do: {:via, Registry, {Bank.Registry, id}}
+
+  def init(args), do: {:ok, args}
 
   def deposit(id, amount) do
     GenServer.call(via_registry(id), {:deposit, amount})
@@ -65,14 +71,6 @@ defmodule Bank.Account do
 
     {:noreply, new_state}
   end
-
-  defp start_with(id, message) do
-    {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{}, name: via_registry(id))
-    send pid, message
-    {:ok, id}
-  end
-
-  defp via_registry(id), do: {:via, Registry, {Bank.Registry, id}}
 
   defp changes_from(%__MODULE__{id: id, changes: changes}) do
     %EventStream{changes | id: id}
