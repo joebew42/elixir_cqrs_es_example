@@ -3,8 +3,6 @@ defmodule Bank.BankServiceTest do
 
   import Mock
 
-  alias Bank.{EventStore, EventStream}
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
   alias Bank.AccountRepository
 
   alias Bank.BankService
@@ -42,33 +40,15 @@ defmodule Bank.BankServiceTest do
     end
   end
 
-  describe "withdrawn money to an existing amount" do
-    test "should decline the operation due to insufficient funds" do
-      with_mock EventStore,
-        [load_event_stream: fn(_) -> {:ok, %EventStream{version: 0, events: [%AccountCreated{id: "Joe"}]}} end,
-         append_to_stream: fn(_) -> :ok end]
-      do
-        :ok = BankService.withdraw_money("Joe", 100)
+  test "withdraw money from an existing account" do
+    with_mock AccountRepository,
+      [find_by_id: fn(_) -> {:ok, "Joe"} end,
+       save: fn(_) -> :ok end]
+    do
+      :ok = BankService.withdraw_money("Joe", 100)
 
-        assert called EventStore.append_to_stream(%EventStream{
-          id: "Joe", version: 0,
-          events: [%MoneyWithdrawalDeclined{id: "Joe", amount: 100}]
-        })
-      end
-    end
-
-    test "should accept operation due sufficient funds" do
-      with_mock EventStore,
-        [load_event_stream: fn(_) -> {:ok, %EventStream{version: 1, events: [%MoneyDeposited{id: "Joe", amount: 100}, %AccountCreated{id: "Joe"}]}} end,
-         append_to_stream: fn(_) -> :ok end]
-      do
-        :ok = BankService.withdraw_money("Joe", 100)
-
-        assert called EventStore.append_to_stream(%EventStream{
-          id: "Joe", version: 0,
-          events: [%MoneyWithdrawn{id: "Joe", amount: 100}]
-        })
-      end
+      assert called AccountRepository.find_by_id("Joe")
+      assert called AccountRepository.save("Joe")
     end
   end
 end

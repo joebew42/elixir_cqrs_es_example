@@ -18,12 +18,10 @@ mix test
 
 ## DOING
 
-- Introduce an `AccountRepository` that will act as a repository for `Account`, and it will be used by the `BankService`
-  - Move the withdrawn out of the BankService
+- Implement an InMemory `EventStore`
 
 ## Questions & TODOs
 
-- Implement the `EventStore`
 - We may have to introduce an `EventBus`
 - Should the `CommandHandler` return errors?
 - `Account` may be able to create named processes, so that we can easily identiy `Account`s by their names intead of `pid`s
@@ -36,6 +34,8 @@ mix test
 
 ## DONE
 
+- Introduce an `AccountRepository` that will act as a repository for `Account`, and it will be used by the `BankService`
+  - Move the withdrawn out of the BankService
 - `EventStore.append_to_stream` should return `:ok` and not `{:ok}`
 - Consider to return an `EventStream` instead of a list when doing `Account.changes(...)`
 - `Accounts` should be a `BankService`. It is stateless and will collaborate with the `AccountRepository`
