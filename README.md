@@ -18,11 +18,10 @@ mix test
 
 ## DOING
 
-- Introduce a `Registry` for `Account` named process
+- `Account.load_from_event_stream` is not tested
 
 ## Questions & TODOs
 
-- `Account.load_from_event_stream` is not tested
 - `AccountRepository` should deal with the `id` and not with the `pid`
 - Implement an InMemory `EventStore`
 - We may have to introduce an `EventBus`
@@ -37,6 +36,7 @@ mix test
 
 ## DONE
 
+- Introduce a `Registry` for `Account` named process
 - Introduce an `AccountRepository` that will act as a repository for `Account`, and it will be used by the `BankService`
   - Move the withdrawn out of the BankService
 - `EventStore.append_to_stream` should return `:ok` and not `{:ok}`

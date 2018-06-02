@@ -7,33 +7,27 @@ defmodule Bank.Account do
   defstruct id: nil, amount: 0, changes: %EventStream{}
 
   def new(id) do
-    start_with {:create, id}
+    start_with(id, {:create, id})
   end
 
-  def load_from_event_stream(event_stream = %EventStream{}) do
-    start_with {:load_from, event_stream}
-  end
-
-  defp start_with(message) do
-    {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{})
-    send pid, message
-    {:ok, pid}
-  end
-
-  def deposit(pid, amount) do
-    GenServer.call(pid, {:deposit, amount})
-  end
-
-  def withdraw(pid, amount) do
-    GenServer.call(pid, {:withdraw, amount})
-  end
-
-  def changes(pid) do
-    GenServer.call(pid, :changes)
+  def load_from_event_stream(event_stream = %EventStream{id: id}) do
+    start_with(id, {:load_from, event_stream})
   end
 
   def init(args) do
     {:ok, args}
+  end
+
+  def deposit(id, amount) do
+    GenServer.call(via_registry(id), {:deposit, amount})
+  end
+
+  def withdraw(id, amount) do
+    GenServer.call(via_registry(id), {:withdraw, amount})
+  end
+
+  def changes(id) do
+    GenServer.call(via_registry(id), :changes)
   end
 
   def handle_call(:changes, _pid, state) do
@@ -68,6 +62,14 @@ defmodule Bank.Account do
     new_state = apply_many_events(event_stream.events, state)
     {:noreply, new_state}
   end
+
+  defp start_with(id, message) do
+    {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{}, name: via_registry(id))
+    send pid, message
+    {:ok, id}
+  end
+
+  defp via_registry(id), do: {:via, Registry, {Bank.Registry, id}}
 
   defp changes_from(%__MODULE__{id: id, changes: changes}) do
     %EventStream{changes | id: id}
