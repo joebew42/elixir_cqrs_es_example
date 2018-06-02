@@ -59,7 +59,10 @@ defmodule Bank.Account do
   end
 
   def handle_info({:load_from, event_stream}, state) do
-    new_state = apply_many_events(event_stream.events, state)
+    new_state =
+      apply_many_events(event_stream.events, state)
+      |> update_version(event_stream.version)
+
     {:noreply, new_state}
   end
 
@@ -104,5 +107,9 @@ defmodule Bank.Account do
   defp apply_many_events(events, state) do
     events
     |> List.foldr(state, &apply_event(&1, &2))
+  end
+
+  defp update_version(state, version) do
+    %__MODULE__{state | changes: %EventStream{state.changes | version: version}}
   end
 end

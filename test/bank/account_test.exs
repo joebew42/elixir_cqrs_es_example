@@ -39,8 +39,8 @@ defmodule Bank.AccountTest do
     event_stream = %EventStream{
       id: "Joe", version: 1,
       events: [
+        %MoneyDeposited{id: "Joe", amount: 100},
         %AccountCreated{id: "Joe"},
-        %MoneyDeposited{id: "Joe", amount: 100}
       ]
     }
 
@@ -55,6 +55,6 @@ defmodule Bank.AccountTest do
   end
 
   defp has_version?(id, version) do
-    assert %EventStream{id: id, version: version} = Account.changes(id)
+    assert %EventStream{id: ^id, version: ^version} = Account.changes(id)
   end
 end
