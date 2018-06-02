@@ -1,1 +1,1 @@
-ExUnit.start(trace: true)
+ExUnit.start(trace: true, exclude: :ignore)
