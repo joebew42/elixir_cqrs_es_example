@@ -6,37 +6,37 @@ defmodule Bank.AccountTest do
   alias Bank.Account
 
   setup do
-    {:ok, pid} = Account.new("Joe")
-    %{pid: pid}
+    {:ok, id} = Account.new("Joe")
+    %{id: id}
   end
 
-  test "#new produces an AccountCreated change", %{pid: pid} do
-    assert contain_change?(pid, %AccountCreated{id: "Joe"})
+  test "#new produces an AccountCreated change", %{id: id} do
+    assert contain_change?(id, %AccountCreated{id: "Joe"})
   end
 
-  test "#deposit produces a MoneyDeposited change", %{pid: pid} do
-    Account.deposit(pid, 100)
+  test "#deposit produces a MoneyDeposited change", %{id: id} do
+    Account.deposit(id, 100)
 
-    assert contain_change?(pid, %MoneyDeposited{id: "Joe", amount: 100})
+    assert contain_change?(id, %MoneyDeposited{id: "Joe", amount: 100})
   end
 
   describe "#withdraw" do
-    test "produces a MoneyWithdrawalDeclined if there is no sufficient funds", %{pid: pid} do
-      Account.withdraw(pid, 100)
+    test "produces a MoneyWithdrawalDeclined if there is no sufficient funds", %{id: id} do
+      Account.withdraw(id, 100)
 
-      assert contain_change?(pid, %MoneyWithdrawalDeclined{id: "Joe", amount: 100})
+      assert contain_change?(id, %MoneyWithdrawalDeclined{id: "Joe", amount: 100})
     end
 
-    test "produces a MoneyWithdrawn", %{pid: pid} do
-      Account.deposit(pid, 100)
-      Account.withdraw(pid, 100)
+    test "produces a MoneyWithdrawn", %{id: id} do
+      Account.deposit(id, 100)
+      Account.withdraw(id, 100)
 
-      assert contain_change?(pid, %MoneyWithdrawn{id: "Joe", amount: 100})
+      assert contain_change?(id, %MoneyWithdrawn{id: "Joe", amount: 100})
     end
   end
 
-  defp contain_change?(pid, event) do
-    %EventStream{events: events} = Account.changes(pid)
+  defp contain_change?(id, event) do
+    %EventStream{events: events} = Account.changes(id)
     assert Enum.member?(events, event)
   end
 end

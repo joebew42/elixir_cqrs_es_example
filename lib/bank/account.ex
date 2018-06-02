@@ -1,79 +1,77 @@
 defmodule Bank.Account do
+  use GenServer
+
   alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
   alias Bank.EventStream
 
   defstruct id: nil, amount: 0, changes: %EventStream{}
 
   def new(id) do
-    spawn_with {:attempt_command, {:create, id}}
+    start_with {:create, id}
   end
 
   def load_from_event_stream(event_stream = %EventStream{}) do
-    spawn_with {:load_from, event_stream}
+    start_with {:load_from, event_stream}
   end
 
-  def deposit(pid, amount) do
-    send pid, {:attempt_command, {:deposit, amount}}
-  end
-
-  def withdraw(pid, amount) do
-    send pid, {:attempt_command, {:withdraw, amount}}
-  end
-
-  def changes(pid) do
-    send pid, {:changes, self()}
-    receive do
-      {:ok, changes} -> changes
-    end
-  end
-
-  def loop(state) do
-    receive do
-      {:attempt_command, command} ->
-        {:ok, new_state} = handle(command, state)
-        loop(new_state)
-      {:load_from, event_stream} ->
-        new_state = apply_many_events(event_stream.events, state)
-        loop(new_state)
-      {:changes, from} ->
-        send from, {:ok, changes_from(state)}
-        loop(state)
-    end
-  end
-
-  defp spawn_with(message) do
-    pid = spawn(__MODULE__, :loop, [%__MODULE__{}])
+  defp start_with(message) do
+    {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{})
     send pid, message
     {:ok, pid}
   end
 
-  defp changes_from(%__MODULE__{id: id, changes: changes}) do
-    %EventStream{changes | id: id}
+  def deposit(pid, amount) do
+    GenServer.call(pid, {:deposit, amount})
   end
 
-  defp handle({:create, id}, state) do
-    event = %AccountCreated{id: id}
-    new_state = apply_new_event(event, state)
-    {:ok, new_state}
+  def withdraw(pid, amount) do
+    GenServer.call(pid, {:withdraw, amount})
   end
 
-  defp handle({:deposit, amount}, state) do
+  def changes(pid) do
+    GenServer.call(pid, :changes)
+  end
+
+  def init(args) do
+    {:ok, args}
+  end
+
+  def handle_call(:changes, _pid, state) do
+    {:reply, changes_from(state), state}
+  end
+
+  def handle_call({:deposit, amount}, _pid, state) do
     event = %MoneyDeposited{id: state.id, amount: amount}
     new_state = apply_new_event(event, state)
-    {:ok, new_state}
+    {:reply, :ok, new_state}
   end
 
-  defp handle({:withdraw, amount}, state) do
+  def handle_call({:withdraw, amount}, _pid, state) do
     new_amount = state.amount - amount
     event = case new_amount >= 0 do
       true -> %MoneyWithdrawn{id: state.id, amount: amount}
       false -> %MoneyWithdrawalDeclined{id: state.id, amount: amount}
     end
     new_state = apply_new_event(event, state)
-    {:ok, new_state}
+    {:reply, :ok, new_state}
   end
 
-  defp handle(_, state), do: {:ok, state}
+  def handle_call(_, _pid, state), do: {:reply, :ok, state}
+
+  def handle_info({:create, id}, state) do
+    event = %AccountCreated{id: id}
+    new_state = apply_new_event(event, state)
+    {:noreply, new_state}
+  end
+
+  def handle_info({:load_from, event_stream}, state) do
+    new_state = apply_many_events(event_stream.events, state)
+    {:noreply, new_state}
+  end
+
+  defp changes_from(%__MODULE__{id: id, changes: changes}) do
+    %EventStream{changes | id: id}
+  end
 
   defp apply_new_event(event, state) do
     new_state = apply_event(event, state)

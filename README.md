@@ -22,6 +22,7 @@ mix test
 
 ## Questions & TODOs
 
+- `Account.load_from_event_stream` is not tested
 - `AccountRepository` should deal with the `id` and not with the `pid`
 - Implement an InMemory `EventStore`
 - We may have to introduce an `EventBus`
