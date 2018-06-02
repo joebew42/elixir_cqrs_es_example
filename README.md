@@ -32,6 +32,7 @@ mix test
 - When handle the `deposit_money` command we should check if the `account` process is running
 - When to flush all the `changes` of the `Account`?
 - When to use a `Service`? Should the `command_handler` deal with a `BankService`?
+- `EventBus` and `CommandBus` are quite similar
 
 ## DONE
 

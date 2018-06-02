@@ -7,6 +7,7 @@ defmodule Bank.Supervisor do
 
   def init(:ok) do
     children = [
+      Bank.EventBus,
       Bank.CommandBus,
       Bank.CommandHandler
     ]
