@@ -55,6 +55,6 @@ defmodule Bank.AccountTest do
   end
 
   defp has_version?(id, version) do
-    assert %EventStream{id: ^id, version: ^version} = Account.changes(id)
+    assert %EventStream{id: id, version: version, events: []} == Account.changes(id)
   end
 end
