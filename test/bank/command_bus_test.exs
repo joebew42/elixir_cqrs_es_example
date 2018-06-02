@@ -1,16 +1,18 @@
 defmodule Bank.CommandBusTest do
   use ExUnit.Case, async: true
 
+  alias Bank.CommandBus
+
   test "not subscribed handler do not receive events" do
-    Bank.CommandBus.publish({:create_account, "joe"})
+    CommandBus.publish({:create_account, "joe"})
 
     refute_receive {:create_account, "joe"}
   end
 
   test "subscribed handler receive events" do
-    Bank.CommandBus.subscribe(self())
+    CommandBus.subscribe(self())
 
-    Bank.CommandBus.publish({:create_account, "joe"})
+    CommandBus.publish({:create_account, "joe"})
 
     assert_receive {_, _, {:create_account, "joe"}}
   end
