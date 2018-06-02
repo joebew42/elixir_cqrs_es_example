@@ -18,10 +18,12 @@ mix test
 
 ## DOING
 
-- Implement an InMemory `EventStore`
+- Introduce a `Registry` for `Account` named process
 
 ## Questions & TODOs
 
+- `AccountRepository` should deal with the `id` and not with the `pid`
+- Implement an InMemory `EventStore`
 - We may have to introduce an `EventBus`
 - Should the `CommandHandler` return errors?
 - `Account` may be able to create named processes, so that we can easily identiy `Account`s by their names intead of `pid`s
