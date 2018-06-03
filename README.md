@@ -18,7 +18,6 @@ mix test
 
 ## DOING
 
-
 ## Questions & TODOs
 
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
