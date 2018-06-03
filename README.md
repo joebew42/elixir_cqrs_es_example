@@ -18,15 +18,13 @@ mix test
 
 ## DOING
 
-- `AccountRepository` should deal with the `id` and not with the `pid`
 
 ## Questions & TODOs
 
+- Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
 - Does `Account`s may to be supervised?
 - Implement an InMemory `EventStore`
-- We may have to introduce an `EventBus`
 - Should the `CommandHandler` return errors?
-- `Account` may be able to create named processes, so that we can easily identiy `Account`s by their names intead of `pid`s
 - `Bank` will act as a client that will send commands
 - How to handle concurrent issue in the `EventStore.append_to_stream`?
 - When handle the `deposit_money` command we should check if the `account` process is running
@@ -36,7 +34,10 @@ mix test
 
 ## DONE
 
+- `AccountRepository` should deal with the `id` and not with the `pid`
+- We may have to introduce an `EventBus`
 - `Account.load_from_event_stream` is not tested
+- `Account` may be able to create named processes, so that we can easily identiy `Account`s by their names intead of `pid`s
 - Introduce a `Registry` for `Account` named process
 - Introduce an `AccountRepository` that will act as a repository for `Account`, and it will be used by the `BankService`
   - Move the withdrawn out of the BankService

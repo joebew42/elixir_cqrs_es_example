@@ -24,6 +24,13 @@ defmodule Bank.Account do
 
   def init(args), do: {:ok, args}
 
+  def exists?(id) do
+    case Registry.lookup(Bank.Registry, id) do
+      [] -> false
+      [{_pid, nil}] -> true
+    end
+  end
+
   def deposit(id, amount) do
     GenServer.call(via_registry(id), {:deposit, amount})
   end

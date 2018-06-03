@@ -17,7 +17,27 @@ defmodule Bank.AccountRepositoryTest do
         {:ok, _id} = AccountRepository.find_by_id("Joe")
 
         assert called EventStore.load_event_stream("Joe")
-        assert not called EventStore.append_to_stream(%EventStream{})
+        refute called EventStore.append_to_stream(%EventStream{})
+      end
+    end
+
+    test "does not build an account if it is available" do
+      {:ok, id} = Account.new("Joe")
+
+      with_mock EventStore, [] do
+        {:ok, ^id} = AccountRepository.find_by_id("Joe")
+
+        refute called EventStore.load_event_stream("Joe")
+        refute called EventStore.append_to_stream(%EventStream{})
+      end
+    end
+
+    test "returns not_found when there are no events" do
+      with_mock EventStore, [load_event_stream: fn(_) -> {:error, :not_found} end] do
+        assert AccountRepository.find_by_id("unexisting_account") == {:error, :not_found}
+
+        assert called EventStore.load_event_stream("unexisting_account")
+        refute called EventStore.append_to_stream(%EventStream{})
       end
     end
   end
@@ -36,5 +56,4 @@ defmodule Bank.AccountRepositoryTest do
       end
     end
   end
-
 end

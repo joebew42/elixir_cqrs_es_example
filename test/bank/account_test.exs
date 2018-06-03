@@ -49,6 +49,18 @@ defmodule Bank.AccountTest do
     assert has_version?(id, 1)
   end
 
+  describe "#exists?" do
+    test "return false when the account does not exist" do
+      assert Account.exists?("unexisting_account") == false
+    end
+
+    test "return true when the account exists" do
+      Account.new("Joe")
+
+      assert Account.exists?("Joe")
+    end
+  end
+
   defp contain_change?(id, event) do
     %EventStream{events: events} = Account.changes(id)
     assert Enum.member?(events, event)
