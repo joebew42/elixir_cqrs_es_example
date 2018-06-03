@@ -22,6 +22,7 @@ mix test
 
 ## Questions & TODOs
 
+- Does `Account`s may to be supervised?
 - Implement an InMemory `EventStore`
 - We may have to introduce an `EventBus`
 - Should the `CommandHandler` return errors?
