@@ -4,27 +4,27 @@ defmodule Bank.BankService do
 
   def create_account(id) do
     case AccountRepository.find_by_id(id) do
-      {:ok, _id} ->
+      {:ok, ^id} ->
         :ok
       {:error, :not_found} ->
-        # {:ok, _pid} = Account.new(id) # how to document this collaboration with a test?
+        {:ok, ^id} = Account.new(id)
         AccountRepository.save(id)
         :ok
     end
   end
 
-  def deposit_money(id, _amount) do
+  def deposit_money(id, amount) do
     case AccountRepository.find_by_id(id) do
-      {:ok, _id} ->
-        # Account.deposit(pid, amount) # how to document this collaboration with a test?
+      {:ok, ^id} ->
+        Account.deposit(id, amount)
         AccountRepository.save(id)
     end
   end
 
-  def withdraw_money(id, _amount) do
+  def withdraw_money(id, amount) do
     case AccountRepository.find_by_id(id) do
-      {:ok, _id} ->
-        # Account.deposit(pid, amount) # how to document this collaboration with a test?
+      {:ok, ^id} ->
+        Account.deposit(id, amount)
         AccountRepository.save(id)
     end
   end

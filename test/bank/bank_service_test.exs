@@ -28,27 +28,33 @@ defmodule Bank.BankServiceTest do
     end
   end
 
-  test "deposit money to an existing account" do
-    with_mock AccountRepository,
-      [find_by_id: fn(_) -> {:ok, "Joe"} end,
-       save: fn(_) -> :ok end]
-    do
-      :ok = BankService.deposit_money("Joe", 100)
-
-      assert called AccountRepository.find_by_id("Joe")
-      assert called AccountRepository.save("Joe")
+  describe "for an existing account" do
+    setup do
+      BankService.create_account("Joe")
     end
-  end
 
-  test "withdraw money from an existing account" do
-    with_mock AccountRepository,
-      [find_by_id: fn(_) -> {:ok, "Joe"} end,
-       save: fn(_) -> :ok end]
-    do
-      :ok = BankService.withdraw_money("Joe", 100)
+    test "deposit money" do
+      with_mock AccountRepository,
+        [find_by_id: fn(_) -> {:ok, "Joe"} end,
+         save: fn(_) -> :ok end]
+      do
+        :ok = BankService.deposit_money("Joe", 100)
 
-      assert called AccountRepository.find_by_id("Joe")
-      assert called AccountRepository.save("Joe")
+        assert called AccountRepository.find_by_id("Joe")
+        assert called AccountRepository.save("Joe")
+      end
+    end
+
+    test "withdraw money" do
+      with_mock AccountRepository,
+        [find_by_id: fn(_) -> {:ok, "Joe"} end,
+         save: fn(_) -> :ok end]
+      do
+        :ok = BankService.withdraw_money("Joe", 100)
+
+        assert called AccountRepository.find_by_id("Joe")
+        assert called AccountRepository.save("Joe")
+      end
     end
   end
 end
