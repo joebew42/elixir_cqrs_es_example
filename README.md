@@ -18,10 +18,10 @@ mix test
 
 ## DOING
 
+- `AccountRepository` should deal with the `id` and not with the `pid`
 
 ## Questions & TODOs
 
-- `AccountRepository` should deal with the `id` and not with the `pid`
 - Implement an InMemory `EventStore`
 - We may have to introduce an `EventBus`
 - Should the `CommandHandler` return errors?
