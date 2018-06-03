@@ -18,11 +18,12 @@ mix test
 
 ## DOING
 
+- Implement an InMemory `EventStore`
+
 ## Questions & TODOs
 
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
 - Does `Account`s may to be supervised?
-- Implement an InMemory `EventStore`
 - Should the `CommandHandler` return errors?
 - `Bank` will act as a client that will send commands
 - How to handle concurrent issue in the `EventStore.append_to_stream`?
