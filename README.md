@@ -18,7 +18,7 @@ mix test
 
 ## DOING
 
-- Write an Acceptance Test
+- `EventStore.append_to_stream` should accept the `ID`, the `expected_version` and the list of `changes`
 
 ## Questions & TODOs
 
@@ -37,6 +37,7 @@ mix test
 
 ## DONE
 
+- Write an Acceptance Test
 - `AccountRepository` should deal with the `id` and not with the `pid`
 - We may have to introduce an `EventBus`
 - `Account.load_from_event_stream` is not tested
