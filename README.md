@@ -18,10 +18,13 @@ mix test
 
 ## DOING
 
-- Implement an InMemory `EventStore`
+- Write an Acceptance Test
 
 ## Questions & TODOs
 
+- Use Mox and introduce a behaviour for the `AccountRepository`
+- [?] Implement an `EventStoreAccountRepository`
+- Implement an InMemory `EventStore`
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
 - Does `Account`s may to be supervised?
 - Should the `CommandHandler` return errors?

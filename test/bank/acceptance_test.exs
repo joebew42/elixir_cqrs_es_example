@@ -4,11 +4,16 @@ defmodule Bank.AcceptanceTest do
   alias Bank.Client
 
   @tag :ignore
-  describe "as a user I can create an account" do
-    test "so that I can check my balance" do
-      :ok = Client.create_account("Joe")
+  test "As a User I can create a new account" do
+    when_create_a_new_account()
+    then_the_balance_is_zero()
+  end
 
-      assert Client.balance("Joe") == 0
-    end
+  defp when_create_a_new_account() do
+    assert Client.create_account("AN_ACCOUNT") == :ok
+  end
+
+  defp then_the_balance_is_zero() do
+    assert Client.balance("AN_ACCOUNT") == 0
   end
 end
