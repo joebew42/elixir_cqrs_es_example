@@ -20,6 +20,7 @@ defmodule ElixirCqrsEsExample.Mixfile do
 
   defp deps do
     [
+      {:mox, "~> 0.4", only: :test},
       {:mock, "~> 0.3.0", only: :test}
     ]
   end

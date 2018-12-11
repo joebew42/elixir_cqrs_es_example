@@ -18,11 +18,13 @@ mix test
 
 ## DOING
 
-- `EventStore.append_to_stream` should accept the `ID`, the `expected_version` and the list of `changes`
+
 
 ## Questions & TODOs
 
-- Use Mox and introduce a behaviour for the `AccountRepository`
+- Replace `BankService` with different `UseCases`
+- Use Mox instead of Mock
+- Handle the `expected_version` when trying to append new events `EventStore.append_to_stream`
 - [?] Implement an `EventStoreAccountRepository`
 - Implement an InMemory `EventStore`
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
