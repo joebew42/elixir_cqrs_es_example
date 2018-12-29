@@ -1,0 +1,1 @@
+Mox.defmock(Bank.EventStoreMock, for: Bank.EventStore)

@@ -1,9 +1,13 @@
 defmodule Bank.AccountTest do
   use ExUnit.Case, async: true
 
-  alias Bank.EventStream
   alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
   alias Bank.Account
+
+  setup do
+    start_supervised {Registry, keys: :unique, name: Bank.Registry}
+    :ok
+  end
 
   describe "with a new account" do
     setup do
@@ -35,18 +39,13 @@ defmodule Bank.AccountTest do
     end
   end
 
-  test "#load_from_event_stream load the state from an EventStream" do
-    event_stream = %EventStream{
-      id: "Joe", version: 1,
-      events: [
-        %MoneyDeposited{id: "Joe", amount: 100},
-        %AccountCreated{id: "Joe"},
-      ]
-    }
+  test "#load_from_event_stream load the state from events" do
+    changes = [
+      %MoneyDeposited{id: "Joe", amount: 100},
+      %AccountCreated{id: "Joe"},
+    ]
 
-    {:ok, id} = Account.load_from_event_stream(event_stream)
-
-    assert has_version?(id, 1)
+    assert Account.load_from_event_stream("Joe", changes) == {:ok, "Joe"}
   end
 
   describe "#exists?" do
@@ -62,11 +61,6 @@ defmodule Bank.AccountTest do
   end
 
   defp contain_change?(id, event) do
-    %EventStream{events: events} = Account.changes(id)
-    assert Enum.member?(events, event)
-  end
-
-  defp has_version?(id, version) do
-    assert %EventStream{id: id, version: version, events: []} == Account.changes(id)
+    assert Enum.member?(Account.changes(id), event)
   end
 end

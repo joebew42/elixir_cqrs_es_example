@@ -3,6 +3,11 @@ defmodule Bank.CommandBusTest do
 
   alias Bank.CommandBus
 
+  setup do
+    start_supervised CommandBus
+    :ok
+  end
+
   test "not subscribed handler do not receive events" do
     CommandBus.publish({:create_account, "joe"})
 

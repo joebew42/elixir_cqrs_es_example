@@ -1,6 +1,11 @@
 defmodule Bank.EventStore do
-  alias Bank.EventStream
+  @type aggregate_id() :: String.t()
+  @type version() :: integer()
+  @type changes() :: list()
 
-  def append_to_stream(_changes = %EventStream{}), do: :ok
-  def load_event_stream(_id), do: {:error, :not_found} # {:ok, %Bank.EventStream{}} | {:error, reason}
+  @type load_result() :: {:ok, version(), changes()} | {:error, :not_found}
+  @type append_result() :: :ok | {:error, String.t()}
+
+  @callback load_event_stream(aggregate_id()) :: load_result()
+  @callback append_to_stream(aggregate_id(), version(), changes()) :: append_result()
 end

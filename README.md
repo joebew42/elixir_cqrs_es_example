@@ -19,11 +19,9 @@ mix test
 ## DOING
 
 
-
 ## Questions & TODOs
 
-- Replace `BankService` with different `UseCases`
-- Use Mox instead of Mock
+- Extract the `via_registry` out from `Account`
 - Handle the `expected_version` when trying to append new events `EventStore.append_to_stream`
 - [?] Implement an `EventStoreAccountRepository`
 - Implement an InMemory `EventStore`
@@ -39,6 +37,9 @@ mix test
 
 ## DONE
 
+- Remove EventStream
+- Use Mox instead of Mock
+- [!] Remove `BankService`
 - Write an Acceptance Test
 - `AccountRepository` should deal with the `id` and not with the `pid`
 - We may have to introduce an `EventBus`

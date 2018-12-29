@@ -1,8 +1,6 @@
 defmodule Bank.EventBusTest do
   use ExUnit.Case, async: true
 
-  alias Bank.EventBus
-
   defmodule ProxyProcess do
     def start([forward_to: pid]), do: spawn(__MODULE__, :loop, [pid])
 
@@ -13,6 +11,13 @@ defmodule Bank.EventBusTest do
           loop(pid)
       end
     end
+  end
+
+  alias Bank.EventBus
+
+  setup do
+    start_supervised EventBus
+    :ok
   end
 
   test "not subscribed handler do not receive events" do

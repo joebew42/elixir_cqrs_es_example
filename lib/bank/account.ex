@@ -2,16 +2,15 @@ defmodule Bank.Account do
   use GenServer
 
   alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
-  alias Bank.EventStream
 
-  defstruct id: nil, amount: 0, changes: %EventStream{}
+  defstruct id: nil, amount: 0, changes: []
 
   def new(id) do
     start_with(id, {:create, id})
   end
 
-  def load_from_event_stream(event_stream = %EventStream{id: id}) do
-    start_with(id, {:load_from, event_stream})
+  def load_from_event_stream(id, changes) do
+    start_with(id, {:load_from, changes})
   end
 
   defp start_with(id, message) do
@@ -44,7 +43,7 @@ defmodule Bank.Account do
   end
 
   def handle_call(:changes, _pid, state) do
-    {:reply, changes_from(state), state}
+    {:reply, state.changes, state}
   end
 
   def handle_call({:deposit, amount}, _pid, state) do
@@ -71,24 +70,15 @@ defmodule Bank.Account do
     {:noreply, new_state}
   end
 
-  def handle_info({:load_from, event_stream}, state) do
-    new_state =
-      apply_many_events(event_stream.events, state)
-      |> update_version(event_stream.version)
+  def handle_info({:load_from, changes}, state) do
+    new_state = apply_many_events(changes, state)
 
     {:noreply, new_state}
   end
 
-  defp changes_from(%__MODULE__{id: id, changes: changes}) do
-    %EventStream{changes | id: id}
-  end
-
   defp apply_new_event(event, state) do
     new_state = apply_event(event, state)
-    changes = %EventStream{
-      version: state.changes.version + 1,
-      events: [event|state.changes.events]
-    }
+    changes = [event|state.changes]
 
     %__MODULE__{new_state | changes: changes}
   end
@@ -112,9 +102,5 @@ defmodule Bank.Account do
   defp apply_many_events(events, state) do
     events
     |> List.foldr(state, &apply_event(&1, &2))
-  end
-
-  defp update_version(state, version) do
-    %__MODULE__{state | changes: %EventStream{state.changes | version: version}}
   end
 end
