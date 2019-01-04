@@ -18,13 +18,14 @@ mix test
 
 ## DOING
 
+- Implement an InMemory `EventStore`
 
 ## Questions & TODOs
 
+- Elixir: Is it possible to configure the application through environment variables?
 - Extract the `via_registry` out from `Account`
 - Handle the `expected_version` when trying to append new events `EventStore.append_to_stream`
 - [?] Implement an `EventStoreAccountRepository`
-- Implement an InMemory `EventStore`
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
 - Does `Account`s may to be supervised?
 - Should the `CommandHandler` return errors?
