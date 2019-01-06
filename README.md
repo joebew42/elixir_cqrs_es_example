@@ -19,6 +19,8 @@ mix test
 ## DOING
 
 - Implement an InMemory `EventStore`
+  - Questions:
+    - Should the `InMemoryEventStore` implement the `EventStore` behaviour and also `use` the `GenServer`? Aren't we violating the LSP? Because now we have an implementation of the `EventStore` that promises more than what is described by its contract (the `start_link` function) ...
 
 ## Questions & TODOs
 
