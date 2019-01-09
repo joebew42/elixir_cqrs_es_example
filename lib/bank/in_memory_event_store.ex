@@ -24,6 +24,10 @@ defmodule Bank.InMemoryEventStore do
 
   @impl true
   def handle_call({:append_to_stream, aggregate_id, version, changes}, _from, state) do
+    state = %{
+      "aggregate_id" => []
+    }
+
     {:reply, :ok, state}
   end
 end

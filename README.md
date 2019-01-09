@@ -18,7 +18,7 @@ mix test
 
 ## DOING
 
-- Implement an InMemory `EventStore`
+- Implement an InMemory `EventStore` ([source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs))
   - Questions:
     - Should the `InMemoryEventStore` implement the `EventStore` behaviour and also `use` the `GenServer`? Aren't we violating the LSP? Because now we have an implementation of the `EventStore` that promises more than what is described by its contract (the `start_link` function) ...
 
