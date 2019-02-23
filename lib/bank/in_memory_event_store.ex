@@ -42,23 +42,42 @@ defmodule Bank.InMemoryEventStore do
   end
 
   @impl true
-  def handle_call({:append_to_stream, aggregate_id, _expected_version, changes}, _from, state) do
+  def handle_call({:append_to_stream, aggregate_id, expected_version, changes}, _from, state) do
     event_descriptors = Map.get(state, aggregate_id, [])
-    updated_event_descriptors = to_event_descriptors(changes) ++ event_descriptors
 
-    new_state = Map.put(state, aggregate_id, updated_event_descriptors)
+    concurrency_check =
+      case actual_version_of(event_descriptors) do
+        actual_version when actual_version != expected_version ->
+          {:error, "the expected version: #{expected_version} does not match with the actual version: #{actual_version}"}
 
-    {:reply, :ok, new_state}
+        _ ->
+          :ok
+      end
+
+    new_state =
+      case concurrency_check do
+        {:error, _message} ->
+          state
+
+        :ok ->
+          updated_event_descriptors = to_event_descriptors(changes, expected_version + 1, []) ++ event_descriptors
+          Map.put(state, aggregate_id, updated_event_descriptors)
+      end
+
+    {:reply, concurrency_check, new_state}
   end
 
-  defp to_event_descriptors(changes) do
-    changes
-    |> Enum.map(&to_event_descriptor/1)
+  defp to_event_descriptors([], _next_version, event_descriptors) do
+    Enum.reverse(event_descriptors)
   end
 
-  defp to_event_descriptor(change) do
+  defp to_event_descriptors([change|changes_left], next_version, event_descriptors) do
+    to_event_descriptors(changes_left, next_version + 1, [to_event_descriptor(next_version, change) | event_descriptors])
+  end
+
+  defp to_event_descriptor(version, change) do
     %EventDescriptor{
-      version: 0,
+      version: version,
       event_data: change
     }
   end
@@ -66,5 +85,13 @@ defmodule Bank.InMemoryEventStore do
   defp event_stream_from(event_descriptors) do
     event_descriptors
     |> Enum.map(& &1.event_data)
+  end
+
+  defp actual_version_of([]) do
+    -1
+  end
+
+  defp actual_version_of([last_event_descriptor | _others]) do
+    last_event_descriptor.version
   end
 end

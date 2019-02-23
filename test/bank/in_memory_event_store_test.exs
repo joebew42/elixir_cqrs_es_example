@@ -29,13 +29,14 @@ defmodule Bank.InMemoryEventStoreTest do
     end
   end
 
-  # describe "append_to_stream/1" do
-  #   test "returns a concurrency error when the expected does not match" do
-  #     EventStore.append_to_stream("AN_AGGREGATE_ID", -1, [%AnEvent{id: "AN_AGGREGATE_ID"}])
+  describe "append_to_stream/1" do
+    test "returns a concurrency error when the expected version does not match" do
+      EventStore.append_to_stream("AN_AGGREGATE_ID", -1, [%AnEvent{id: "AN_AGGREGATE_ID"}])
+      EventStore.append_to_stream("AN_AGGREGATE_ID",  0, [%AnEvent{id: "AN_AGGREGATE_ID"}])
 
-  #     result = EventStore.append_to_stream("AN_AGGREGATE_ID", -1, [%AnEvent{id: "AN_AGGREGATE_ID"}])
+      result = EventStore.append_to_stream("AN_AGGREGATE_ID", 0, [%AnEvent{id: "AN_AGGREGATE_ID"}])
 
-  #     assert result == {:concurrency_error, "the expected version: -1 does not match with the actual version: 0"}
-  #   end
-  # end
+      assert result == {:error, "the expected version: 0 does not match with the actual version: 1"}
+    end
+  end
 end
