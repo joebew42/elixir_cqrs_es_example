@@ -19,8 +19,12 @@ mix test
 ## DOING
 
 - Implement an InMemory `EventStore` ([source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs))
+  - Check that the events are stored in the correct order
+  - Check that the version follows the correct numerical progression
+  - Probably we could consider to review the tests of the InMemoryEventStore. Test the behaviour and not the functions!
+  - Probably the InMemoryEventStore will be the EventStore, itself. What should change is where the event descriptors are stored. Think about it!
   - Questions:
-    - Should the `InMemoryEventStore` implement the `EventStore` behaviour and also `use` the `GenServer`? Aren't we violating the LSP? Because now we have an implementation of the `EventStore` that promises more than what is described by its contract (the `start_link` function) ...
+    - Based on the [source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs), another responsability of the event store is to publish events once they are saved. Do we need to move this responsability elsewhere? Or we can proceed to maintain it there?
 
 ## Questions & TODOs
 

@@ -39,4 +39,8 @@ defmodule Bank.InMemoryEventStoreTest do
       assert result == {:error, "the expected version: 0 does not match with the actual version: 1"}
     end
   end
+
+  test "events order and correct version progression" do
+    assert false == true
+  end
 end
