@@ -53,4 +53,8 @@ defmodule Bank.InMemoryEventStoreTest do
       ]
     }
   end
+
+  test "publish events once they are stored" do
+    assert true == false
+  end
 end

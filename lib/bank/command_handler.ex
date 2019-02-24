@@ -4,8 +4,6 @@ defmodule Bank.CommandHandler do
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
   alias Bank.Account
 
-  @event_store Application.get_env(:elixir_cqrs_es_example, :event_store)
-
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: :command_handler)
   end
@@ -16,12 +14,12 @@ defmodule Bank.CommandHandler do
   end
 
   def handle_call(%CreateAccount{id: name}, _pid, nil) do
-    result = case @event_store.load_event_stream(name) do
+    result = case event_store().load_event_stream(name) do
       {:ok, _version, _changes} ->
         :ok
       {:error, :not_found} ->
         {:ok, ^name} = Account.new(name)
-        :ok = @event_store.append_to_stream(name, -1, Account.changes(name))
+        :ok = event_store().append_to_stream(name, -1, Account.changes(name))
         :ok
     end
 
@@ -29,11 +27,11 @@ defmodule Bank.CommandHandler do
   end
 
   def handle_call(%DepositMoney{id: name, amount: amount}, _pid, nil) do
-    result = case @event_store.load_event_stream(name) do
+    result = case event_store().load_event_stream(name) do
       {:ok, version, changes} ->
         {:ok, ^name} = Account.load_from_event_stream(name, changes)
         :ok = Account.deposit(name, amount)
-        :ok = @event_store.append_to_stream(name, version, Account.changes(name))
+        :ok = event_store().append_to_stream(name, version, Account.changes(name))
         :ok
       {:error, :not_found} ->
         :ok
@@ -43,11 +41,11 @@ defmodule Bank.CommandHandler do
   end
 
   def handle_call(%WithdrawMoney{id: name, amount: amount}, _pid, nil) do
-    result = case @event_store.load_event_stream(name) do
+    result = case event_store().load_event_stream(name) do
       {:ok, version, changes} ->
         {:ok, ^name} = Account.load_from_event_stream(name, changes)
         :ok = Account.withdraw(name, amount)
-        :ok = @event_store.append_to_stream(name, version, Account.changes(name))
+        :ok = event_store().append_to_stream(name, version, Account.changes(name))
         :ok
       {:error, :not_found} ->
         :ok
@@ -58,5 +56,9 @@ defmodule Bank.CommandHandler do
 
   def handle_call(_unknown_command, _pid, nil) do
     {:reply, {:error, :unknown_command}, nil}
+  end
+
+  defp event_store() do
+    Application.get_env(:elixir_cqrs_es_example, :event_store)
   end
 end

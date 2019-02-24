@@ -10,7 +10,8 @@ defmodule Bank.Supervisor do
       {Registry, keys: :unique, name: Bank.Registry},
       Bank.EventBus,
       Bank.CommandBus,
-      Bank.CommandHandler
+      Bank.CommandHandler,
+      Bank.InMemoryEventStore
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -3,6 +3,15 @@ defmodule Bank.AcceptanceTest do
 
   alias Bank.Client
 
+  setup do
+    :ok = Application.start(:mox)
+    :ok = Application.start(:elixir_cqrs_es_example)
+
+    :ok = Application.put_env(:elixir_cqrs_es_example, :event_store, Bank.InMemoryEventStore)
+
+    :ok
+  end
+
   @tag :ignore
   test "As a User I can create a new account" do
     when_create_a_new_account()
