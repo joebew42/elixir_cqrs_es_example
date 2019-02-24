@@ -19,8 +19,6 @@ mix test
 ## DOING
 
 - Implement an InMemory `EventStore` ([source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs))
-  - Check that the events are stored in the correct order
-  - Check that the version follows the correct numerical progression
   - Probably we could consider to review the tests of the InMemoryEventStore. Test the behaviour and not the functions!
   - Probably the InMemoryEventStore will be the EventStore, itself. What should change is where the event descriptors are stored. Think about it!
   - Questions:
@@ -44,6 +42,8 @@ mix test
 
 ## DONE
 
+- Check that the events are stored in the correct order
+- Check that the version follows the correct numerical progression
 - Remove EventStream
 - Use Mox instead of Mock
 - [!] Remove `BankService`

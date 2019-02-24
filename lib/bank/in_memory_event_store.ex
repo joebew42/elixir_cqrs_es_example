@@ -35,7 +35,7 @@ defmodule Bank.InMemoryEventStore do
           {:error, :not_found}
 
         event_descriptors ->
-          {:ok, 0, event_stream_from(event_descriptors)}
+          {:ok, actual_version_of(event_descriptors), event_stream_from(event_descriptors)}
       end
 
     {:reply, reply, state}
@@ -85,6 +85,7 @@ defmodule Bank.InMemoryEventStore do
   defp event_stream_from(event_descriptors) do
     event_descriptors
     |> Enum.map(& &1.event_data)
+    |> Enum.reverse()
   end
 
   defp actual_version_of([]) do

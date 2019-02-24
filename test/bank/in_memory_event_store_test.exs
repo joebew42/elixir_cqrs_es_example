@@ -2,7 +2,7 @@ defmodule Bank.InMemoryEventStoreTest do
   use ExUnit.Case, async: true
 
   defmodule AnEvent do
-    defstruct [:id]
+    defstruct [:id, :data]
   end
 
   alias Bank.InMemoryEventStore, as: EventStore
@@ -41,6 +41,20 @@ defmodule Bank.InMemoryEventStoreTest do
   end
 
   test "events order and correct version progression" do
-    assert false == true
+    EventStore.append_to_stream("AN_AGGREGATE_ID", -1, [%AnEvent{id: "AN_AGGREGATE_ID", data: 1}])
+    EventStore.append_to_stream("AN_AGGREGATE_ID",  0, [%AnEvent{id: "AN_AGGREGATE_ID", data: 2}])
+    EventStore.append_to_stream("AN_AGGREGATE_ID",  1, [%AnEvent{id: "AN_AGGREGATE_ID", data: 3}])
+    EventStore.append_to_stream("AN_AGGREGATE_ID",  2, [%AnEvent{id: "AN_AGGREGATE_ID", data: 4}])
+
+    assert EventStore.load_event_stream("AN_AGGREGATE_ID") == {
+      :ok,
+      3,
+      [
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 1},
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 2},
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 3},
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 4}
+      ]
+    }
   end
 end
