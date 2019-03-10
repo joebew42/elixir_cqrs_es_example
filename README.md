@@ -22,7 +22,6 @@ mix test
 
 - The EventDescriptor should have the aggregateId
 - Consider to return the changes from the first to the latest, and also following this order in the event store
-- Based on the [source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs), another responsability of the event store is to publish events once they are saved. Do we need to move this responsability elsewhere? Or we can proceed to maintain it there?
 - Probably the InMemoryEventStore will be the EventStore, itself. What should change is where the event descriptors are stored. Think about it!
 - Elixir: Is it possible to configure the application through environment variables?
 - Extract the `via_registry` out from `Account`
@@ -40,6 +39,8 @@ mix test
 
 ## DONE
 
+- Based on the [source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs), another responsability of the event store is to publish events once they are saved. Do we need to move this responsability elsewhere? Or we can proceed to maintain it there?
+  - At the moment we say that is a responsability of the EventStore to publish the events once they are stored
 - Provide an implementation of the `EventPublisher` to publish events via `EventBus`
 - Publish the events to the EventBus once the events have been stored
 - Implement an InMemory `EventStore` ([source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs))
