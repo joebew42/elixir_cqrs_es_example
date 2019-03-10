@@ -1,15 +1,26 @@
 defmodule Bank.InMemoryEventStoreTest do
   use ExUnit.Case, async: true
 
+  import Mox
+
   defmodule AnEvent do
     defstruct [:id, :data]
   end
 
+  alias Bank.EventPublisherMock, as: EventPublisher
+
   alias Bank.InMemoryEventStore, as: EventStore
 
   setup do
-    {:ok, _pid} = start_supervised(EventStore)
+    Application.start(:mox)
+    Mox.set_mox_global
+    :ok
+  end
 
+  setup do
+    stub(EventPublisher, :publish, fn(_an_event) -> :ok end)
+
+    start_supervised(EventStore)
     :ok
   end
 
@@ -40,21 +51,31 @@ defmodule Bank.InMemoryEventStoreTest do
     EventStore.append_to_stream("AN_AGGREGATE_ID", -1, [%AnEvent{id: "AN_AGGREGATE_ID", data: 1}])
     EventStore.append_to_stream("AN_AGGREGATE_ID",  0, [%AnEvent{id: "AN_AGGREGATE_ID", data: 2}])
     EventStore.append_to_stream("AN_AGGREGATE_ID",  1, [%AnEvent{id: "AN_AGGREGATE_ID", data: 3}])
-    EventStore.append_to_stream("AN_AGGREGATE_ID",  2, [%AnEvent{id: "AN_AGGREGATE_ID", data: 4}])
+    EventStore.append_to_stream("AN_AGGREGATE_ID",  2, [%AnEvent{id: "AN_AGGREGATE_ID", data: 5}, %AnEvent{id: "AN_AGGREGATE_ID", data: 4}])
 
     assert EventStore.load_event_stream("AN_AGGREGATE_ID") == {
       :ok,
-      3,
+      4,
       [
-        %AnEvent{id: "AN_AGGREGATE_ID", data: 1},
-        %AnEvent{id: "AN_AGGREGATE_ID", data: 2},
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 5},
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 4},
         %AnEvent{id: "AN_AGGREGATE_ID", data: 3},
-        %AnEvent{id: "AN_AGGREGATE_ID", data: 4}
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 2},
+        %AnEvent{id: "AN_AGGREGATE_ID", data: 1}
       ]
     }
   end
 
   test "publish events once they are stored" do
-    assert true == false
+    first_event = %AnEvent{id: "AN_AGGREGATE_ID", data: 1}
+    last_event = %AnEvent{id: "AN_AGGREGATE_ID", data: 2}
+
+    EventPublisher
+    |> expect(:publish, fn ^first_event -> :ok end)
+    |> expect(:publish, fn ^last_event -> :ok end)
+
+    EventStore.append_to_stream("AN_AGGREGATE_ID", -1, [last_event, first_event])
+
+    verify!(EventPublisher)
   end
 end

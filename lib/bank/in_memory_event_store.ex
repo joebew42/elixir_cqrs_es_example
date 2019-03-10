@@ -60,19 +60,26 @@ defmodule Bank.InMemoryEventStore do
           state
 
         :ok ->
-          updated_event_descriptors = to_event_descriptors(changes, expected_version + 1, []) ++ event_descriptors
+          updated_event_descriptors = to_event_descriptors(Enum.reverse(changes), expected_version + 1, []) ++ event_descriptors
           Map.put(state, aggregate_id, updated_event_descriptors)
       end
+
+    case concurrency_check do
+      :ok ->
+        publish_all(Enum.reverse(changes))
+      _ ->
+        nil
+    end
 
     {:reply, concurrency_check, new_state}
   end
 
   defp to_event_descriptors([], _next_version, event_descriptors) do
-    Enum.reverse(event_descriptors)
+    event_descriptors
   end
 
-  defp to_event_descriptors([change|changes_left], next_version, event_descriptors) do
-    to_event_descriptors(changes_left, next_version + 1, [to_event_descriptor(next_version, change) | event_descriptors])
+  defp to_event_descriptors([change|changes], next_version, event_descriptors) do
+    to_event_descriptors(changes, next_version + 1, [to_event_descriptor(next_version, change) | event_descriptors])
   end
 
   defp to_event_descriptor(version, change) do
@@ -85,7 +92,6 @@ defmodule Bank.InMemoryEventStore do
   defp event_stream_from(event_descriptors) do
     event_descriptors
     |> Enum.map(& &1.event_data)
-    |> Enum.reverse()
   end
 
   defp actual_version_of([]) do
@@ -94,5 +100,15 @@ defmodule Bank.InMemoryEventStore do
 
   defp actual_version_of([last_event_descriptor | _others]) do
     last_event_descriptor.version
+  end
+
+  defp publish_all(changes) do
+    Enum.each(changes, fn(change) ->
+      event_publisher().publish(change)
+    end)
+  end
+
+  defp event_publisher() do
+    Application.get_env(:elixir_cqrs_es_example, :event_publisher)
   end
 end

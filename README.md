@@ -18,10 +18,12 @@ mix test
 
 ## DOING
 
-- Publish the events to the EventBus once the events have been stored
+- The EventBus should be an implementation of the EventPublisher. It could be an `EventBusEventPublisher`
 
 ## Questions & TODOs
 
+- The EventDescriptor should have the aggregateId
+- Consider to return the changes from the first to the latest, and also following this order in the event store
 - Based on the [source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs), another responsability of the event store is to publish events once they are saved. Do we need to move this responsability elsewhere? Or we can proceed to maintain it there?
 - Probably the InMemoryEventStore will be the EventStore, itself. What should change is where the event descriptors are stored. Think about it!
 - Elixir: Is it possible to configure the application through environment variables?
@@ -40,6 +42,7 @@ mix test
 
 ## DONE
 
+- Publish the events to the EventBus once the events have been stored
 - Implement an InMemory `EventStore` ([source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs))
 - Probably we could consider to review the tests of the InMemoryEventStore. Test the behaviour and not the functions!
 - Check that the events are stored in the correct order
