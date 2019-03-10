@@ -12,7 +12,7 @@ defmodule Bank.Client do
   end
 
   def balance(_name) do
-    0 # there should be a view
+    0 # there should be a view / a read model
   end
 
   defp wait_until_receive(event) do
