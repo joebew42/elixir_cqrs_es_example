@@ -12,7 +12,6 @@ defmodule Bank.InMemoryEventStoreTest do
   alias Bank.InMemoryEventStore, as: EventStore
 
   setup do
-    Application.start(:mox)
     Mox.set_mox_global
     :ok
   end

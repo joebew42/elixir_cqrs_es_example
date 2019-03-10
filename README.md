@@ -13,7 +13,13 @@ mix deps.get
 ## Run all tests
 
 ```
-mix test
+mix test --include acceptance
+```
+
+## Run only acceptance tests
+
+```
+mix test --only acceptance
 ```
 
 ## DOING

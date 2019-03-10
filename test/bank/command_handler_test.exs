@@ -9,7 +9,6 @@ defmodule Bank.CommandHandlerTest do
   alias Bank.EventStoreMock
 
   setup do
-    start_supervised Mox.Server
     Mox.set_mox_global
 
     start_supervised {Registry, [keys: :unique, name: Bank.Registry]}
