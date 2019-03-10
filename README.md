@@ -18,8 +18,6 @@ mix test
 
 ## DOING
 
-- The EventBus should be an implementation of the EventPublisher. It could be an `EventBusEventPublisher`
-
 ## Questions & TODOs
 
 - The EventDescriptor should have the aggregateId
@@ -42,6 +40,7 @@ mix test
 
 ## DONE
 
+- Provide an implementation of the `EventPublisher` to publish events via `EventBus`
 - Publish the events to the EventBus once the events have been stored
 - Implement an InMemory `EventStore` ([source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs))
 - Probably we could consider to review the tests of the InMemoryEventStore. Test the behaviour and not the functions!
