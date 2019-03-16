@@ -24,9 +24,21 @@ mix test --only acceptance
 
 ## DOING
 
+- Account should not be a process
+  - it should act as a set of transition functions (fn(current_state, action) -> [events])
+  - also, we are not cleaning up the uncommitted changes
+  - and also, the account processes are created as child of the command handler! Ouch!
+
+Example
+
+```
+state = %Account.State{id: "Joe", amount: 100}
+
+[%MoneyWithdrawn{id: "Joe", amount: 50}] = Account.withdraw(state, 50)
+```
+
 ## Questions & TODOs
 
-- There is no need to mantain the state of the Account as a process
 - Introduce GUID for the aggregateId
 - Should the EventDescriptor have the aggregateId?
 - Consider to return the changes from the first to the latest, and also following this order in the event store
