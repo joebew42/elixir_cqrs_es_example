@@ -13,6 +13,8 @@ defmodule Bank.AcceptanceTest do
     then_the_balance_is(20)
     and_withdraw(100)
     then_the_balance_is(20)
+    and_deposit(30)
+    then_the_balance_is(50)
   end
 
   defp when_create_a_new_account() do

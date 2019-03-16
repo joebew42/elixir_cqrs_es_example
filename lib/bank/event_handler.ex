@@ -19,7 +19,8 @@ defmodule Bank.EventHandler do
   end
 
   def handle_cast(%MoneyDeposited{id: id, amount: amount}, state) do
-    account_read_model().update(id, amount)
+    {:ok, current_balance} = account_read_model().balance(id)
+    account_read_model().update(id, current_balance + amount)
 
     {:noreply, state}
   end
