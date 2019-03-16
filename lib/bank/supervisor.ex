@@ -9,9 +9,11 @@ defmodule Bank.Supervisor do
     children = [
       {Registry, keys: :unique, name: Bank.Registry},
       Bank.EventBus,
+      Bank.EventHandler,
       Bank.CommandBus,
       Bank.CommandHandler,
-      Bank.InMemoryEventStore
+      Bank.InMemoryEventStore,
+      Bank.InMemoryAccountReadModel
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

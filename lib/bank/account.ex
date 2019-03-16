@@ -14,12 +14,27 @@ defmodule Bank.Account do
   end
 
   defp start_with(id, message) do
-    {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{}, name: via_registry(id))
-    send pid, message
+    case already_started?(id) do
+      false ->
+        {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{}, name: via_registry(id))
+        send pid, message
+      true ->
+        nil
+    end
     {:ok, id}
   end
 
   defp via_registry(id), do: {:via, Registry, {Bank.Registry, id}}
+
+  defp already_started?(id) do
+    case Registry.lookup(Bank.Registry, id) do
+      [] ->
+        false
+
+      [{_pid, nil}] ->
+        true
+    end
+  end
 
   def init(args), do: {:ok, args}
 

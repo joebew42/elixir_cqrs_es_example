@@ -24,25 +24,27 @@ mix test --only acceptance
 
 ## DOING
 
-- Provide a read model (view/projection) for the BankAccount
-
 ## Questions & TODOs
 
-- The EventDescriptor should have the aggregateId
+- There is no need to mantain the state of the Account as a process
+- Introduce GUID for the aggregateId
+- Should the EventDescriptor have the aggregateId?
 - Consider to return the changes from the first to the latest, and also following this order in the event store
 - Probably the InMemoryEventStore is the EventStore itself. What should change is where the event descriptors are stored. Think about it!
-- Extract the `via_registry` out from `Account` (the business logic should be decoupled from the genserver)
-- Does `Account`s may to be supervised?
-- What about an `AccountRepository` to `find` and `save` accounts?
+- CommandHandler and EventHandler are too big and quite difficult to test.
+  - Probably is better to decouple the logic from the implementation (GenServer)
+  - Have different command handler based on the command
+  - Have different event handler based on the event
+- Consider to save the latest version as a detail for the read model
+- Improve the setup of the acceptance test
 - Should the `CommandHandler` return errors?
 - `Bank` will act as a client that will send commands
 - When handle the `deposit_money` command we should check if the `account` process is running
-- When to flush all the `changes` of the `Account`?
-- When to use a `Service`? Should the `command_handler` deal with a `BankService`?
 - `EventBus` and `CommandBus` are quite similar
 
 ## DONE
 
+- Provide a read model (view/projection) for the BankAccount
 - How to handle concurrent issue in the `EventStore.append_to_stream`?
 - Handle the `expected_version` when trying to append new events `EventStore.append_to_stream`
 - Based on the [source](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/EventStore.cs), another responsability of the event store is to publish events once they are saved. Do we need to move this responsability elsewhere? Or we can proceed to maintain it there?
@@ -70,6 +72,10 @@ mix test --only acceptance
 
 ## TRASHED
 
+- What about an `AccountRepository` to `find` and `save` accounts?
+- When to flush all the `changes` of the `Account`?
+- Does `Account`s may to be supervised?
+- Extract the `via_registry` out from `Account` (the business logic should be decoupled from the genserver)
 - Elixir: Is it possible to configure the application through environment variables?
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
 - [?] Implement an `EventStoreAccountRepository`

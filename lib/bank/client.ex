@@ -1,25 +1,25 @@
 defmodule Bank.Client do
 
-  alias Bank.Events.AccountCreated
-  alias Bank.Commands.CreateAccount
-  alias Bank.{CommandBus, EventBus}
+  alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
+  alias Bank.CommandBus
+
+  alias Bank.InMemoryAccountReadModel, as: AccountReadModel
 
   def create_account(name) do
-    EventBus.subscribe(self())
     CommandBus.publish(%CreateAccount{id: name})
-
-    :ok = wait_until_receive(%AccountCreated{id: name})
   end
 
-  def balance(_name) do
-    0 # there should be a view / a read model
+  def deposit(name, amount) do
+    CommandBus.publish(%DepositMoney{id: name, amount: amount})
   end
 
-  defp wait_until_receive(event) do
-    receive do
-      event -> :ok
-    after
-      2_000 -> {:error, {:not_received, event}}
-    end
+  def withdraw(name, amount) do
+    CommandBus.publish(%WithdrawMoney{id: name, amount: amount})
+  end
+
+  def balance(name) do
+    Process.sleep(100)
+    {:ok, amount} = AccountReadModel.balance(name)
+    amount
   end
 end

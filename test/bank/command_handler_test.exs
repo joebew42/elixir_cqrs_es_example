@@ -87,7 +87,9 @@ defmodule Bank.CommandHandlerTest do
     assert send_command(:a_not_handled_command) == {:error, :unknown_command}
   end
 
-  defp send_command(command), do: GenServer.call(:command_handler, command)
+  defp send_command(command) do
+    GenServer.call(:command_handler, command)
+  end
 
   defp expect_never(mock, function_name, function) do
     expect(mock, function_name, 0, function)
