@@ -43,6 +43,7 @@ mix test --only acceptance
 
 ## DONE
 
+- CommandHandler handles cast
 - Account should not be a process
   - it should act as a set of transition functions (fn(current_state, action) -> [events])
   - also, we are not cleaning up the uncommitted changes

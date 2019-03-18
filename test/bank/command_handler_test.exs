@@ -24,7 +24,7 @@ defmodule Bank.CommandHandlerTest do
 
       :ok = send_command(%CreateAccount{id: "Joe"})
 
-      verify!(EventStoreMock)
+      verify_called!(EventStoreMock)
     end
 
     test "it creates an account when not exists" do
@@ -34,7 +34,7 @@ defmodule Bank.CommandHandlerTest do
 
       :ok = send_command(%CreateAccount{id: "Joe"})
 
-      verify!(EventStoreMock)
+      verify_called!(EventStoreMock)
     end
   end
 
@@ -46,7 +46,7 @@ defmodule Bank.CommandHandlerTest do
 
       :ok = send_command(%DepositMoney{id: "Joe", amount: 100})
 
-      verify!(EventStoreMock)
+      verify_called!(EventStoreMock)
     end
 
     test "nothing is deposited if the account does not exist" do
@@ -56,7 +56,7 @@ defmodule Bank.CommandHandlerTest do
 
       :ok = send_command(%DepositMoney{id: "Joe", amount: 100})
 
-      verify!(EventStoreMock)
+      verify_called!(EventStoreMock)
     end
   end
 
@@ -68,7 +68,7 @@ defmodule Bank.CommandHandlerTest do
 
       :ok = send_command(%WithdrawMoney{id: "Joe", amount: 100})
 
-      verify!(EventStoreMock)
+      verify_called!(EventStoreMock)
     end
 
     test "nothing is withdrawn if the account does not exist" do
@@ -78,19 +78,27 @@ defmodule Bank.CommandHandlerTest do
 
       :ok = send_command(%WithdrawMoney{id: "Joe", amount: 100})
 
-      verify!(EventStoreMock)
+      verify_called!(EventStoreMock)
     end
   end
 
-  test "return an error for unknown commands" do
-    assert send_command(:a_not_handled_command) == {:error, :unknown_command}
-  end
-
   defp send_command(command) do
-    GenServer.call(:command_handler, command)
+    GenServer.cast(:command_handler, command)
   end
 
   defp expect_never(mock, function_name, function) do
     expect(mock, function_name, 0, function)
+  end
+
+  defp verify_called!(mock, exception \\ nil, retries \\ 3)
+  defp verify_called!(_mock, exception, 0), do: raise exception
+  defp verify_called!(mock, _exception, retries) do
+    try do
+      verify!(mock)
+    rescue
+      exception ->
+        Process.sleep(100)
+        verify_called!(mock, exception, retries - 1)
+    end
   end
 end

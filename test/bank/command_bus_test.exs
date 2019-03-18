@@ -19,6 +19,6 @@ defmodule Bank.CommandBusTest do
 
     CommandBus.publish({:create_account, "joe"})
 
-    assert_receive {_, _, {:create_account, "joe"}}
+    assert_receive {_, {:create_account, "joe"}}
   end
 end
