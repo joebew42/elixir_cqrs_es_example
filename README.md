@@ -28,6 +28,7 @@ mix test --only acceptance
   - Probably is better to decouple the logic from the implementation (GenServer)
   - Have different command handler based on the command
   - Have different event handler based on the event
+  - Consider to use [Task](https://hexdocs.pm/elixir/Task.html)s
 
 ## Questions & TODOs
 
