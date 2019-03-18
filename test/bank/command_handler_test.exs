@@ -11,7 +11,6 @@ defmodule Bank.CommandHandlerTest do
   setup do
     Mox.set_mox_global
 
-    start_supervised {Registry, [keys: :unique, name: Bank.Registry]}
     start_supervised Bank.CommandBus
     start_supervised Bank.CommandHandler
     :ok
