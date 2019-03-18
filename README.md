@@ -24,19 +24,6 @@ mix test --only acceptance
 
 ## DOING
 
-- Account should not be a process
-  - it should act as a set of transition functions (fn(current_state, action) -> [events])
-  - also, we are not cleaning up the uncommitted changes
-  - and also, the account processes are created as child of the command handler! Ouch!
-
-Example
-
-```
-state = %Account.State{id: "Joe", amount: 100}
-
-[%MoneyWithdrawn{id: "Joe", amount: 50}] = Account.withdraw(state, 50)
-```
-
 ## Questions & TODOs
 
 - Introduce GUID for the aggregateId
@@ -56,6 +43,10 @@ state = %Account.State{id: "Joe", amount: 100}
 
 ## DONE
 
+- Account should not be a process
+  - it should act as a set of transition functions (fn(current_state, action) -> [events])
+  - also, we are not cleaning up the uncommitted changes
+  - and also, the account processes are created as child of the command handler! Ouch!
 - Provide a read model (view/projection) for the BankAccount
 - How to handle concurrent issue in the `EventStore.append_to_stream`?
 - Handle the `expected_version` when trying to append new events `EventStore.append_to_stream`

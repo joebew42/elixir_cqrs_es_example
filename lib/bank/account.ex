@@ -1,101 +1,32 @@
 defmodule Bank.Account do
-  use GenServer
+  defstruct id: nil, amount: 0, changes: []
 
   alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
 
-  defstruct id: nil, amount: 0, changes: []
-
-  def new(id) do
-    start_with(id, {:create, id})
+  def new(%__MODULE__{id: nil, amount: 0} = state, id) do
+    apply_new_event(%AccountCreated{id: id}, state)
   end
 
-  def load_from_event_stream(id, changes) do
-    start_with(id, {:load_from, changes})
+  def deposit(%__MODULE__{id: id} = state, amount) when is_binary(id) do
+    apply_new_event(%MoneyDeposited{id: id, amount: amount}, state)
   end
 
-  defp start_with(id, message) do
-    case already_started?(id) do
-      false ->
-        {:ok, pid} = GenServer.start_link(__MODULE__, %__MODULE__{}, name: via_registry(id))
-        send pid, message
-      true ->
-        nil
-    end
-    {:ok, id}
+  def withdraw(%__MODULE__{id: id, amount: current_amount} = state, amount) when is_binary(id) and current_amount - amount >= 0 do
+    apply_new_event(%MoneyWithdrawn{id: id, amount: amount}, state)
   end
 
-  defp via_registry(id), do: {:via, Registry, {Bank.Registry, id}}
-
-  defp already_started?(id) do
-    case Registry.lookup(Bank.Registry, id) do
-      [] ->
-        false
-
-      [{_pid, nil}] ->
-        true
-    end
-  end
-
-  def init(args), do: {:ok, args}
-
-  def exists?(id) do
-    case Registry.lookup(Bank.Registry, id) do
-      [] -> false
-      [{_pid, nil}] -> true
-    end
-  end
-
-  def deposit(id, amount) do
-    GenServer.call(via_registry(id), {:deposit, amount})
-  end
-
-  def withdraw(id, amount) do
-    GenServer.call(via_registry(id), {:withdraw, amount})
-  end
-
-  def changes(id) do
-    GenServer.call(via_registry(id), :changes)
-  end
-
-  def handle_call(:changes, _pid, state) do
-    {:reply, state.changes, state}
-  end
-
-  def handle_call({:deposit, amount}, _pid, state) do
-    event = %MoneyDeposited{id: state.id, amount: amount}
-    new_state = apply_new_event(event, state)
-    {:reply, :ok, new_state}
-  end
-
-  def handle_call({:withdraw, amount}, _pid, state) do
-    new_amount = state.amount - amount
-    event = case new_amount >= 0 do
-      true -> %MoneyWithdrawn{id: state.id, amount: amount}
-      false -> %MoneyWithdrawalDeclined{id: state.id, amount: amount}
-    end
-    new_state = apply_new_event(event, state)
-    {:reply, :ok, new_state}
-  end
-
-  def handle_call(_, _pid, state), do: {:reply, :ok, state}
-
-  def handle_info({:create, id}, state) do
-    event = %AccountCreated{id: id}
-    new_state = apply_new_event(event, state)
-    {:noreply, new_state}
-  end
-
-  def handle_info({:load_from, changes}, state) do
-    new_state = apply_many_events(changes, state)
-
-    {:noreply, new_state}
+  def withdraw(%__MODULE__{id: id} = state, amount) when is_binary(id) do
+    apply_new_event(%MoneyWithdrawalDeclined{id: id, amount: amount}, state)
   end
 
   defp apply_new_event(event, state) do
     new_state = apply_event(event, state)
-    changes = [event|state.changes]
 
-    %__MODULE__{new_state | changes: changes}
+    %__MODULE__{new_state | changes: [event | state.changes]}
+  end
+
+  def load_from_events(events) do
+    List.foldr(events, %__MODULE__{}, &apply_event(&1, &2))
   end
 
   defp apply_event(%AccountCreated{id: id}, state) do
@@ -112,10 +43,5 @@ defmodule Bank.Account do
 
   defp apply_event(%MoneyWithdrawn{amount: withdrawn_amount}, state) do
     %__MODULE__{state | amount: state.amount - withdrawn_amount}
-  end
-
-  defp apply_many_events(events, state) do
-    events
-    |> List.foldr(state, &apply_event(&1, &2))
   end
 end
