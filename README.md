@@ -24,16 +24,17 @@ mix test --only acceptance
 
 ## DOING
 
+- CommandHandler and EventHandler are too big and quite difficult to test.
+  - Probably is better to decouple the logic from the implementation (GenServer)
+  - Have different command handler based on the command
+  - Have different event handler based on the event
+
 ## Questions & TODOs
 
 - Introduce GUID for the aggregateId
 - Should the EventDescriptor have the aggregateId?
 - Consider to return the changes from the first to the latest, and also following this order in the event store
 - Probably the InMemoryEventStore is the EventStore itself. What should change is where the event descriptors are stored. Think about it!
-- CommandHandler and EventHandler are too big and quite difficult to test.
-  - Probably is better to decouple the logic from the implementation (GenServer)
-  - Have different command handler based on the command
-  - Have different event handler based on the event
 - Consider to save the latest version as a detail for the read model
 - Improve the setup of the acceptance test
 - Should the `CommandHandler` return errors?
