@@ -23,6 +23,7 @@ defmodule Bank.CommandBus do
 
   def handle_cast({:publish, command}, subscribers) do
     Enum.each(subscribers, fn(subscriber) -> GenServer.cast(subscriber, command) end )
+
     {:noreply, subscribers}
   end
 end

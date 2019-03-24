@@ -13,49 +13,61 @@ defmodule Bank.CommandHandler do
     {:ok, nil}
   end
 
-  def handle_cast(%CreateAccount{id: name}, nil) do
-    case event_store().load_event_stream(name) do
+  def handle_cast(%CreateAccount{} = command, nil) do
+    create_account_command_handler_handle(command)
+
+    {:noreply, nil}
+  end
+
+  def handle_cast(%DepositMoney{} = command, nil) do
+    deposit_money_command_handler_handle(command)
+
+    {:noreply, nil}
+  end
+
+  def handle_cast(%WithdrawMoney{} = command, nil) do
+    withdraw_money_command_handler_handle(command)
+
+    {:noreply, nil}
+  end
+
+  defp create_account_command_handler_handle(command) do
+    case event_store().load_event_stream(command.id) do
       {:ok, _version, _changes} ->
         :nothing
       {:error, :not_found} ->
         account =
           %Account{}
-          |> Account.new(name)
+          |> Account.new(command.id)
 
-        :ok = event_store().append_to_stream(name, -1, account.changes)
+        :ok = event_store().append_to_stream(command.id, -1, account.changes)
     end
-
-    {:noreply, nil}
   end
 
-  def handle_cast(%DepositMoney{id: name, amount: amount}, nil) do
-    case event_store().load_event_stream(name) do
+  defp deposit_money_command_handler_handle(command) do
+    case event_store().load_event_stream(command.id) do
       {:ok, version, events} ->
         account =
           Account.load_from_events(events)
-          |> Account.deposit(amount)
+          |> Account.deposit(command.amount)
 
-        :ok = event_store().append_to_stream(name, version, account.changes)
+        :ok = event_store().append_to_stream(command.id, version, account.changes)
       {:error, :not_found} ->
         :nothing
     end
-
-    {:noreply, nil}
   end
 
-  def handle_cast(%WithdrawMoney{id: name, amount: amount}, nil) do
-    case event_store().load_event_stream(name) do
+  defp withdraw_money_command_handler_handle(command) do
+    case event_store().load_event_stream(command.id) do
       {:ok, version, events} ->
         account =
           Account.load_from_events(events)
-          |> Account.withdraw(amount)
+          |> Account.withdraw(command.amount)
 
-        :ok = event_store().append_to_stream(name, version, account.changes)
+        :ok = event_store().append_to_stream(command.id, version, account.changes)
       {:error, :not_found} ->
         :nothing
     end
-
-    {:noreply, nil}
   end
 
   defp event_store() do
