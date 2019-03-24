@@ -9,24 +9,22 @@ defmodule Bank.CommandHandler do
 
   def init(nil) do
     Bank.CommandBus.subscribe(self())
-    {:ok, nil}
+    {:ok, %{
+      Commands.CreateAccount => CommandHandlers.CreateAccount,
+      Commands.DepositMoney  => CommandHandlers.DepositMoney,
+      Commands.WithdrawMoney => CommandHandlers.WithdrawMoney
+    }}
   end
 
-  def handle_cast(%Commands.CreateAccount{} = command, nil) do
-    CommandHandlers.CreateAccount.handle(command)
+  def handle_cast(command, handlers) do
+    command_handler = handler_for(command.__struct__, handlers)
 
-    {:noreply, nil}
+    command_handler.handle(command)
+
+    {:noreply, handlers}
   end
 
-  def handle_cast(%Commands.DepositMoney{} = command, nil) do
-    CommandHandlers.DepositMoney.handle(command)
-
-    {:noreply, nil}
-  end
-
-  def handle_cast(%Commands.WithdrawMoney{} = command, nil) do
-    CommandHandlers.WithdrawMoney.handle(command)
-
-    {:noreply, nil}
+  defp handler_for(command_name, handlers) do
+    Map.get(handlers, command_name)
   end
 end
