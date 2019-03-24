@@ -24,18 +24,22 @@ mix test --only acceptance
 
 ## DOING
 
-- CommandHandler and EventHandler are too big and quite difficult to test.
-  - Probably is better to decouple the logic from the implementation (GenServer)
-  - Have different command handler based on the command
-  - Have different event handler based on the event
-  - Consider to use [Task](https://hexdocs.pm/elixir/Task.html)s
+- What to test for the `CommandHandler`?
+- CommandHandler is too big and quite difficult to test.
+  - Consider to use [Task](https://hexdocs.pm/elixir/Task.html)s to run commands
 
 ## Questions & TODOs
 
-- Introduce GUID for the aggregateId
+- There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
+- Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
+- Introduce the use of a GUID for the aggregateId
 - Should the EventDescriptor have the aggregateId?
 - Consider to return the changes from the first to the latest, and also following this order in the event store
 - Probably the InMemoryEventStore is the EventStore itself. What should change is where the event descriptors are stored. Think about it!
+- EventHandler is too big and quite difficult to test.
+  - Probably is better to decouple the logic from the implementation (GenServer)
+  - Have different event handler based on the event
+  - Consider to use [Task](https://hexdocs.pm/elixir/Task.html)s
 - Consider to save the latest version as a detail for the read model
 - Improve the setup of the acceptance test
 - Should the `CommandHandler` return errors?
@@ -45,6 +49,8 @@ mix test --only acceptance
 
 ## DONE
 
+- Have different command handler based on the command
+- Decouple the logic of command handlers from the GenServer implementation
 - CommandHandler handles cast
 - Account should not be a process
   - it should act as a set of transition functions (fn(current_state, action) -> [events])
