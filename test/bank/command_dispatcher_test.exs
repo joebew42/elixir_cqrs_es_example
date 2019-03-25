@@ -34,7 +34,7 @@ defmodule Bank.CommandDispatcherTest do
     test "nothing is dispatched if no command handler is defined" do
       expect_never(CommandHandler, :handle, fn(%AnotherCommand{another_field: "something"}) -> :ok end)
 
-      send_command(%ACommand{a_field: "something"})
+      send_command(%AnotherCommand{another_field: "something"})
 
       verify_mock!(CommandHandler)
     end
