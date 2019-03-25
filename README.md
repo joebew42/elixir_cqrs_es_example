@@ -24,8 +24,7 @@ mix test --only acceptance
 
 ## DOING
 
-- CommandHandler is too big and quite difficult to test.
-  - Consider to use [Task](https://hexdocs.pm/elixir/Task.html)s to run commands
+- Consider to use [Supervised Tasks](https://hexdocs.pm/elixir/Task.html#module-supervised-tasks)s to run commands
 
 ## Questions & TODOs
 
@@ -48,6 +47,8 @@ mix test --only acceptance
 
 ## DONE
 
+- Introduce Task to run commands
+- CommandHandler is too big and quite difficult to test.
 - What to test for the `CommandHandler`?
 - Have different command handler based on the command
 - Decouple the logic of command handlers from the GenServer implementation

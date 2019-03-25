@@ -26,12 +26,14 @@ defmodule Bank.CommandDispatcher do
   def handle_cast(command, handlers) do
     command_handler = handler_for(command.__struct__, handlers)
 
-    command_handler.handle(command)
+    Task.start(fn() ->
+      command_handler.handle(command)
+    end)
 
     {:noreply, handlers}
   end
 
   defp handler_for(command_name, handlers) do
-    Map.get(handlers, command_name)
+    Map.get(handlers, command_name, CommandHandlers.Null)
   end
 end
