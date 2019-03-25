@@ -1,8 +1,10 @@
 defmodule Bank.CommandHandlers.WithdrawMoney do
+  @behaviour Bank.CommandHandler
 
   alias Bank.Commands.WithdrawMoney
   alias Bank.Account
 
+  @impl true
   def handle(%WithdrawMoney{} = command) do
     case event_store().load_event_stream(command.id) do
       {:ok, version, events} ->

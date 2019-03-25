@@ -1,8 +1,10 @@
 defmodule Bank.CommandHandlers.CreateAccount do
+  @behaviour Bank.CommandHandler
 
   alias Bank.Commands.CreateAccount
   alias Bank.Account
 
+  @impl true
   def handle(%CreateAccount{} = command) do
     case event_store().load_event_stream(command.id) do
       {:ok, _version, _changes} ->
