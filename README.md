@@ -24,7 +24,6 @@ mix test --only acceptance
 
 ## DOING
 
-- What to test for the `CommandHandler`?
 - CommandHandler is too big and quite difficult to test.
   - Consider to use [Task](https://hexdocs.pm/elixir/Task.html)s to run commands
 
@@ -49,6 +48,7 @@ mix test --only acceptance
 
 ## DONE
 
+- What to test for the `CommandHandler`?
 - Have different command handler based on the command
 - Decouple the logic of command handlers from the GenServer implementation
 - CommandHandler handles cast

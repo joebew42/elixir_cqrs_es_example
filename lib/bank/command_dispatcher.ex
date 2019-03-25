@@ -3,17 +3,24 @@ defmodule Bank.CommandDispatcher do
 
   alias Bank.{Commands, CommandHandlers}
 
-  def start_link(_opts) do
-    GenServer.start_link(__MODULE__, nil, name: :command_handler)
+  @default_handlers %{
+    Commands.CreateAccount => CommandHandlers.CreateAccount,
+    Commands.DepositMoney  => CommandHandlers.DepositMoney,
+    Commands.WithdrawMoney => CommandHandlers.WithdrawMoney
+  }
+
+  def start_link([]) do
+    start_link([@default_handlers])
   end
 
-  def init(nil) do
+  def start_link([handlers]) do
+    GenServer.start_link(__MODULE__, handlers, name: :command_dispatcher)
+  end
+
+  def init(handlers) do
     Bank.CommandBus.subscribe(self())
-    {:ok, %{
-      Commands.CreateAccount => CommandHandlers.CreateAccount,
-      Commands.DepositMoney  => CommandHandlers.DepositMoney,
-      Commands.WithdrawMoney => CommandHandlers.WithdrawMoney
-    }}
+
+    {:ok, handlers}
   end
 
   def handle_cast(command, handlers) do
