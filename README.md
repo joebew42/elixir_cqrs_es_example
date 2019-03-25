@@ -30,6 +30,7 @@ mix test --only acceptance
 
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
 - Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
+- Create and example of how a money tranfer between two bank accounts could be
 - Introduce the use of a GUID for the aggregateId
 - Should the EventDescriptor have the aggregateId?
 - Consider to return the changes from the first to the latest, and also following this order in the event store
