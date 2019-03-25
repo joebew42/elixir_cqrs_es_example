@@ -1,9 +1,9 @@
-defmodule Bank.CommandHandlerTest do
+defmodule Bank.CommandDispatcherTest do
   use ExUnit.Case, async: true
 
   setup do
     start_supervised Bank.CommandBus
-    start_supervised Bank.CommandHandler
+    start_supervised Bank.CommandDispatcher
     :ok
   end
 

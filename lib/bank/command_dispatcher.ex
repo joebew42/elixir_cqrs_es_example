@@ -1,4 +1,4 @@
-defmodule Bank.CommandHandler do
+defmodule Bank.CommandDispatcher do
   use GenServer
 
   alias Bank.{Commands, CommandHandlers}

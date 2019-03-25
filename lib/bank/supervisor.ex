@@ -10,7 +10,7 @@ defmodule Bank.Supervisor do
       Bank.EventBus,
       Bank.EventHandler,
       Bank.CommandBus,
-      Bank.CommandHandler,
+      Bank.CommandDispatcher,
       Bank.InMemoryEventStore,
       Bank.InMemoryAccountReadModel
     ]
