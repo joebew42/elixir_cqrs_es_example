@@ -3,8 +3,6 @@ defmodule Bank.CommandDispatcherTest do
 
   import Mox
 
-  alias Bank.CommandHandlerMock, as: CommandHandler
-
   defmodule ACommand do
     defstruct [:a_field]
   end
@@ -13,11 +11,18 @@ defmodule Bank.CommandDispatcherTest do
     defstruct [:another_field]
   end
 
+  alias Bank.CommandHandlerMock, as: CommandHandler
+
   setup do
     Mox.set_mox_global
 
-    start_supervised Bank.CommandBus
-    start_supervised {Bank.CommandDispatcher, [%{ ACommand => CommandHandler }]}
+    handlers = %{
+      ACommand => CommandHandler
+    }
+
+    start_supervised {Task.Supervisor, name: Bank.TaskSupervisor}
+    start_supervised {Bank.CommandBus, []}
+    start_supervised {Bank.CommandDispatcher, handlers: handlers}
 
     :ok
   end

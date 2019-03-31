@@ -24,10 +24,11 @@ mix test --only acceptance
 
 ## DOING
 
-- Consider to use [Supervised Tasks](https://hexdocs.pm/elixir/Task.html#module-supervised-tasks)s to run commands
+- Move default_handlers as configuration
 
 ## Questions & TODOs
 
+- In order to reduce the concurrency exception, one solution could be to serialize the execution of commands related to the same aggregate id
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
 - Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
 - Create and example of how a money tranfer between two bank accounts could be
@@ -48,6 +49,7 @@ mix test --only acceptance
 
 ## DONE
 
+- Consider to use [Supervised Tasks](https://hexdocs.pm/elixir/Task.html#module-supervised-tasks)s to run commands
 - Introduce Task to run commands
 - CommandHandler is too big and quite difficult to test.
 - What to test for the `CommandHandler`?

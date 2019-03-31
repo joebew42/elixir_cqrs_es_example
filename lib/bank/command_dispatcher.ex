@@ -10,10 +10,10 @@ defmodule Bank.CommandDispatcher do
   }
 
   def start_link([]) do
-    start_link([@default_handlers])
+    start_link(handlers: @default_handlers)
   end
 
-  def start_link([handlers]) do
+  def start_link(handlers: handlers) do
     GenServer.start_link(__MODULE__, handlers, name: :command_dispatcher)
   end
 
@@ -26,7 +26,7 @@ defmodule Bank.CommandDispatcher do
   def handle_cast(command, handlers) do
     command_handler = handler_for(command.__struct__, handlers)
 
-    Task.start(fn() ->
+    Task.Supervisor.start_child(Bank.TaskSupervisor, fn() ->
       command_handler.handle(command)
     end)
 

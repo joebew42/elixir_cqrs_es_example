@@ -11,6 +11,7 @@ defmodule Bank.Supervisor do
       Bank.EventHandler,
       Bank.CommandBus,
       Bank.CommandDispatcher,
+      {Task.Supervisor, name: Bank.TaskSupervisor},
       Bank.InMemoryEventStore,
       Bank.InMemoryAccountReadModel
     ]
