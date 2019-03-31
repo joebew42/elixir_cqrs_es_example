@@ -24,9 +24,10 @@ mix test --only acceptance
 
 ## DOING
 
+- Create and example of how a money transfer between two bank accounts could be
+
 ## Questions & TODOs
 
-- Create and example of how a money tranfer between two bank accounts could be
 - In order to reduce the concurrency exception, one solution could be to serialize the execution of commands related to the same aggregate id
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
 - Introduce the use of a GUID for the aggregateId

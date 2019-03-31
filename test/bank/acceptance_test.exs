@@ -17,6 +17,11 @@ defmodule Bank.AcceptanceTest do
     then_the_balance_is(50)
   end
 
+  @tag :acceptance
+  test "As a User I can transfer money to another account" do
+    assert false
+  end
+
   defp when_create_a_new_account() do
     assert Client.create_account("AN_ACCOUNT") == :ok
   end
@@ -36,7 +41,7 @@ defmodule Bank.AcceptanceTest do
   setup %{acceptance: true} do
     app = :elixir_cqrs_es_example
 
-    :ok = Application.start(app)
+    Application.start(app)
 
     :ok = Application.put_env(app, :event_store, Bank.InMemoryEventStore)
     :ok = Application.put_env(app, :event_publisher, Bank.EventBusPublisher)
