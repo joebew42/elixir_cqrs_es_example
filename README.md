@@ -95,3 +95,11 @@ mix test --only acceptance
 - Elixir: Is it possible to configure the application through environment variables?
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
 - [?] Implement an `EventStoreAccountRepository`
+
+## Extras
+
+Run multiple calls:
+
+```
+Enum.each(1..10, fn(i) -> Task.start(fn() -> Process.sleep(:rand.uniform(5) * 100); Bank.Client.deposit("ACCOUNT", 1) end) end)
+```
