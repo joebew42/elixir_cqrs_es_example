@@ -13,10 +13,7 @@ defmodule Bank.CommandDispatcher do
 
   def handle_cast(command, handlers) do
     command_handler = handler_for(command.__struct__, handlers)
-
-    Task.Supervisor.start_child(Bank.TaskSupervisor, fn() ->
-      command_handler.handle(command)
-    end)
+    command_handler.handle(command)
 
     {:noreply, handlers}
   end
