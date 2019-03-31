@@ -8,13 +8,13 @@ defmodule Bank.InMemoryAccountReadModel do
   end
 
   @impl Bank.AccountReadModel
-  def update(aggregate_id, amount) do
-    GenServer.call(__MODULE__, {:update, aggregate_id, amount})
+  def save(account_view) do
+    GenServer.call(__MODULE__, {:save, account_view})
   end
 
   @impl Bank.AccountReadModel
-  def balance(aggregate_id) do
-    GenServer.call(__MODULE__, {:balance, aggregate_id})
+  def find(account_id) do
+    GenServer.call(__MODULE__, {:find, account_id})
   end
 
   @impl true
@@ -23,18 +23,18 @@ defmodule Bank.InMemoryAccountReadModel do
   end
 
   @impl true
-  def handle_call({:update, aggregate_id, amount}, _from, state) do
-    {:reply, :ok, Map.put(state, aggregate_id, amount)}
+  def handle_call({:save, account_view}, _from, state) do
+    {:reply, :ok, Map.put(state, account_view.id, account_view)}
   end
 
   @impl true
-  def handle_call({:balance, aggregate_id}, _from, state) do
-    response = case Map.get(state, aggregate_id, :not_found) do
+  def handle_call({:find, account_id}, _from, state) do
+    response = case Map.get(state, account_id, :not_found) do
       :not_found ->
         {:error, :not_found}
 
-      amount ->
-        {:ok, amount}
+      account_view ->
+        {:ok, account_view}
     end
 
     {:reply, response, state}

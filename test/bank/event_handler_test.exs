@@ -13,12 +13,11 @@ defmodule Bank.EventHandlerTest do
     start_supervised Bank.EventBus
     start_supervised Bank.EventHandler
 
-    stub(AccountReadModel, :balance, fn(_id) -> {:ok, 0} end)
     :ok
   end
 
   test "Initialize the account on AccountCreated event" do
-    expect(AccountReadModel, :update, fn "Joe", 0 -> :ok end)
+    expect(AccountReadModel, :save, fn %{id: "Joe", available_balance: 0, account_balance: 0} -> :ok end)
 
     publish(%AccountCreated{id: "Joe"})
 
@@ -26,7 +25,9 @@ defmodule Bank.EventHandlerTest do
   end
 
   test "Update the balance on MoneyDeposited event" do
-    expect(AccountReadModel, :update, fn "Joe", 10 -> :ok end)
+    AccountReadModel
+    |> expect(:find, fn("Joe") -> {:ok, %{id: "Joe", available_balance: 0, account_balance: 0}} end)
+    |> expect(:save, fn %{id: "Joe", available_balance: 10, account_balance: 10} -> :ok end)
 
     publish(%MoneyDeposited{id: "Joe", amount: 10})
 
@@ -34,7 +35,9 @@ defmodule Bank.EventHandlerTest do
   end
 
   test "Update the balance on MoneyWithdrawn event" do
-    expect(AccountReadModel, :update, fn "Joe", -10 -> :ok end)
+    AccountReadModel
+    |> expect(:find, fn("Joe") -> {:ok, %{id: "Joe", available_balance: 10, account_balance: 10}} end)
+    |> expect(:save, fn %{id: "Joe", available_balance: 0, account_balance: 0} -> :ok end)
 
     publish(%MoneyWithdrawn{id: "Joe", amount: 10})
 
@@ -43,6 +46,6 @@ defmodule Bank.EventHandlerTest do
 
   defp publish(event) do
     GenServer.cast(:event_handler, event)
-    Process.sleep(200)
+    Process.sleep(10)
   end
 end

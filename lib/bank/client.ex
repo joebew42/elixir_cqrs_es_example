@@ -17,9 +17,20 @@ defmodule Bank.Client do
     CommandBus.publish(%WithdrawMoney{id: name, amount: amount})
   end
 
-  def balance(name) do
-    Process.sleep(100)
-    {:ok, amount} = AccountReadModel.balance(name)
-    amount
+  def available_balance(name) do
+    find_account!(name).available_balance
+  end
+
+  def account_balance(name) do
+    find_account!(name).account_balance
+  end
+
+  defp find_account!(name) do
+    case AccountReadModel.find(name) do
+      {:ok, account} ->
+        account
+      {:error, :not_found} ->
+        raise "Account #{inspect(name)} not available"
+    end
   end
 end

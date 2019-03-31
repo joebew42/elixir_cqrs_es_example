@@ -1,8 +1,7 @@
 defmodule Bank.AccountReadModel do
-  @type aggregate_id() :: String.t()
-  @type amount() :: integer()
-  @type balance() :: integer()
+  @type account_id() :: String.t()
+  @type account_view() :: map()
 
-  @callback update(aggregate_id(), amount()) :: :ok
-  @callback balance(aggregate_id()) :: {:ok, balance()} | {:error, :not_found}
+  @callback save(account_view()) :: :ok
+  @callback find(account_id()) :: {:ok, account_view()} | {:error, :not_found}
 end

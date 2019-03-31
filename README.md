@@ -25,7 +25,6 @@ mix test --only acceptance
 ## DOING
 
 - Create and example of how a money transfer between two bank accounts could be
-  - Introduce the concept of `Account Balance` and `Available Balance`
 
 ## Questions & TODOs
 
@@ -50,6 +49,7 @@ mix test --only acceptance
 
 ## DONE
 
+- Introduce the concept of `Account Balance` and `Available Balance`
 - Do not use the task supervisor for now
 - Move default_handlers as configuration
 - Consider to use [Supervised Tasks](https://hexdocs.pm/elixir/Task.html#module-supervised-tasks)s to run commands
