@@ -28,11 +28,11 @@ mix test --only acceptance
 
 ## Questions & TODOs
 
+- Create and example of how a money tranfer between two bank accounts could be
 - In order to reduce the concurrency exception, one solution could be to serialize the execution of commands related to the same aggregate id
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
-- Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
-- Create and example of how a money tranfer between two bank accounts could be
 - Introduce the use of a GUID for the aggregateId
+- Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
 - Should the EventDescriptor have the aggregateId?
 - Consider to return the changes from the first to the latest, and also following this order in the event store
 - Probably the InMemoryEventStore is the EventStore itself. What should change is where the event descriptors are stored. Think about it!
