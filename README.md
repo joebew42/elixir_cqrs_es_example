@@ -25,10 +25,12 @@ mix test --only acceptance
 ## DOING
 
 - Create and example of how a money transfer between two bank accounts could be
+  - Introduce the concept of `Account Balance` and `Available Balance`
 
 ## Questions & TODOs
 
 - In order to reduce the concurrency exception, one solution could be to serialize the execution of commands related to the same aggregate id
+  - At the moment the TaskSupervisor is disabled
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
 - Introduce the use of a GUID for the aggregateId
 - Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
@@ -48,6 +50,7 @@ mix test --only acceptance
 
 ## DONE
 
+- Do not use the task supervisor for now
 - Move default_handlers as configuration
 - Consider to use [Supervised Tasks](https://hexdocs.pm/elixir/Task.html#module-supervised-tasks)s to run commands
 - Introduce Task to run commands
