@@ -24,8 +24,6 @@ mix test --only acceptance
 
 ## DOING
 
-- Move default_handlers as configuration
-
 ## Questions & TODOs
 
 - Create and example of how a money tranfer between two bank accounts could be
@@ -49,6 +47,7 @@ mix test --only acceptance
 
 ## DONE
 
+- Move default_handlers as configuration
 - Consider to use [Supervised Tasks](https://hexdocs.pm/elixir/Task.html#module-supervised-tasks)s to run commands
 - Introduce Task to run commands
 - CommandHandler is too big and quite difficult to test.

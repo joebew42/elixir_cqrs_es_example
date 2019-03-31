@@ -1,19 +1,7 @@
 defmodule Bank.CommandDispatcher do
   use GenServer
 
-  alias Bank.{Commands, CommandHandlers}
-
-  @default_handlers %{
-    Commands.CreateAccount => CommandHandlers.CreateAccount,
-    Commands.DepositMoney  => CommandHandlers.DepositMoney,
-    Commands.WithdrawMoney => CommandHandlers.WithdrawMoney
-  }
-
-  def start_link([]) do
-    start_link(handlers: @default_handlers)
-  end
-
-  def start_link(handlers: handlers) do
+  def start_link(command_handlers: handlers) do
     GenServer.start_link(__MODULE__, handlers, name: :command_dispatcher)
   end
 
@@ -34,6 +22,6 @@ defmodule Bank.CommandDispatcher do
   end
 
   defp handler_for(command_name, handlers) do
-    Map.get(handlers, command_name, CommandHandlers.Null)
+    Map.get(handlers, command_name, Bank.CommandHandlers.Null)
   end
 end

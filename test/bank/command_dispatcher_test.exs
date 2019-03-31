@@ -22,7 +22,7 @@ defmodule Bank.CommandDispatcherTest do
 
     start_supervised {Task.Supervisor, name: Bank.TaskSupervisor}
     start_supervised {Bank.CommandBus, []}
-    start_supervised {Bank.CommandDispatcher, handlers: handlers}
+    start_supervised {Bank.CommandDispatcher, command_handlers: handlers}
 
     :ok
   end
