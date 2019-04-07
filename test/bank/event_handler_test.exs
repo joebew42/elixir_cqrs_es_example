@@ -55,7 +55,7 @@ defmodule Bank.EventHandlerTest do
   end
 
   defp publish(event) do
-    GenServer.cast(:event_handler, event)
+    Bank.EventBus.publish(event)
     Process.sleep(10)
   end
 end
