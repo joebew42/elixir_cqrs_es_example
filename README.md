@@ -51,6 +51,7 @@ mix test --only acceptance
 - `Bank` will act as a client that will send commands
 - When handle the `deposit_money` command we should check if the `account` process is running
 - `EventBus` and `CommandBus` are quite similar
+- Consider to run a `mix format` to see what happen :)
 
 ## DONE
 
