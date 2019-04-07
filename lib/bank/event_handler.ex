@@ -1,7 +1,8 @@
 defmodule Bank.EventHandler do
   use GenServer
 
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawn}
+  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawn,
+                    TransferOperationOpened}
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: :event_handler)
@@ -41,6 +42,18 @@ defmodule Bank.EventHandler do
     updated_account_view =
       account_view
       |> Map.put(:available_balance, account_view.available_balance - amount)
+      |> Map.put(:account_balance, account_view.account_balance - amount)
+
+    account_read_model().save(updated_account_view)
+
+    {:noreply, state}
+  end
+
+  def handle_cast(%TransferOperationOpened{id: id, amount: amount}, state) do
+    {:ok, account_view} = account_read_model().find(id)
+
+    updated_account_view =
+      account_view
       |> Map.put(:account_balance, account_view.account_balance - amount)
 
     account_read_model().save(updated_account_view)

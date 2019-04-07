@@ -18,4 +18,8 @@ defmodule Bank.Events do
   defmodule TransferOperationOpened do
     defstruct [:id, :amount, :payee, :operation_id]
   end
+
+  defmodule TransferOperationDeclined do
+    defstruct [:id, :amount, :payee, :operation_id, :reason]
+  end
 end

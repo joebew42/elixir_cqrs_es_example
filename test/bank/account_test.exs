@@ -1,7 +1,8 @@
 defmodule Bank.AccountTest do
   use ExUnit.Case, async: true
 
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
+  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined,
+                    MoneyWithdrawn, TransferOperationOpened, TransferOperationDeclined}
   alias Bank.Account
 
   describe "#new" do
@@ -46,6 +47,44 @@ defmodule Bank.AccountTest do
     end
   end
 
+  describe "#transfer" do
+    test "produces a TransferOperationOpened when enough funds are available" do
+      account =
+        %Account{}
+        |> Account.new("Joe")
+        |> Account.deposit(100)
+        |> Account.transfer(100, "A_PAYEE", "AN_OPERATION_ID")
+
+      expected_change =
+        %TransferOperationOpened{
+          id: "Joe",
+          amount: 100,
+          payee: "A_PAYEE",
+          operation_id: "AN_OPERATION_ID"
+        }
+
+      assert account |> contain_change?(expected_change)
+    end
+
+    test "produces a TransferOperationDeclined due insufficient funds" do
+      account =
+        %Account{}
+        |> Account.new("Joe")
+        |> Account.transfer(100, "A_PAYEE", "AN_OPERATION_ID")
+
+      expected_change =
+        %TransferOperationDeclined{
+          id: "Joe",
+          amount: 100,
+          payee: "A_PAYEE",
+          operation_id: "AN_OPERATION_ID",
+          reason: "insufficient funds"
+        }
+
+      assert account |> contain_change?(expected_change)
+    end
+  end
+
   describe "#load_from_events" do
     test "load the state from events" do
       events = [
@@ -54,7 +93,12 @@ defmodule Bank.AccountTest do
         %AccountCreated{id: "Joe"},
       ]
 
-      assert Account.load_from_events(events) == %Account{id: "Joe", amount: 50, changes: []}
+      assert Account.load_from_events(events) == %Account{
+        id: "Joe",
+        available_balance: 50,
+        account_balance: 50,
+        changes: []
+      }
     end
   end
 
