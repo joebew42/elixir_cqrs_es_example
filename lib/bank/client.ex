@@ -29,6 +29,10 @@ defmodule Bank.Client do
     find_account!(name).account_balance
   end
 
+  def status(name) do
+    find_account!(name)
+  end
+
   defp find_account!(name) do
     case AccountReadModel.find(name) do
       {:ok, account} ->
