@@ -1,6 +1,6 @@
 defmodule Bank.Client do
 
-  alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney}
+  alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney, TransferMoney}
   alias Bank.CommandBus
 
   alias Bank.InMemoryAccountReadModel, as: AccountReadModel
@@ -15,6 +15,10 @@ defmodule Bank.Client do
 
   def withdraw(name, amount) do
     CommandBus.publish(%WithdrawMoney{id: name, amount: amount})
+  end
+
+  def transfer(from, to, amount) do
+    CommandBus.publish(%TransferMoney{id: from, amount: amount, payee: to, operation_id: UUID.uuid1()})
   end
 
   def available_balance(name) do

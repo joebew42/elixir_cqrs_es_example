@@ -14,4 +14,8 @@ defmodule Bank.Events do
   defmodule MoneyWithdrawn do
     defstruct [:id, :amount]
   end
+
+  defmodule TransferOperationOpened do
+    defstruct [:id, :amount, :payee, :operation_id]
+  end
 end

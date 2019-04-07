@@ -1,7 +1,8 @@
 defmodule Bank.Account do
   defstruct id: nil, amount: 0, changes: []
 
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined, MoneyWithdrawn}
+  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined,
+                    MoneyWithdrawn, TransferOperationOpened}
 
   def new(%__MODULE__{id: nil, amount: 0} = state, id) do
     apply_new_event(%AccountCreated{id: id}, state)
@@ -17,6 +18,10 @@ defmodule Bank.Account do
 
   def withdraw(%__MODULE__{id: id} = state, amount) when is_binary(id) do
     apply_new_event(%MoneyWithdrawalDeclined{id: id, amount: amount}, state)
+  end
+
+  def transfer(%__MODULE__{id: id} = state, amount, payee, operation_id) do
+    %__MODULE__{state | changes: [%TransferOperationOpened{id: id, amount: amount, payee: payee, operation_id: operation_id}]}
   end
 
   defp apply_new_event(event, state) do

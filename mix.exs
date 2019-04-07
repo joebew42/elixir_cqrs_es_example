@@ -15,7 +15,7 @@ defmodule ElixirCqrsEsExample.Mixfile do
 
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :uuid],
       mod: {Bank, []}
     ]
   end
@@ -28,6 +28,7 @@ defmodule ElixirCqrsEsExample.Mixfile do
 
   defp deps do
     [
+      {:uuid, "~> 1.1"},
       {:mox, "~> 0.4", only: :test},
     ]
   end
