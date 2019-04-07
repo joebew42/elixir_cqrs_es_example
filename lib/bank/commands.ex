@@ -14,4 +14,8 @@ defmodule Bank.Commands do
   defmodule TransferMoney do
     defstruct [:id, :amount, :payee, :operation_id]
   end
+
+  defmodule ConfirmTransferOperation do
+    defstruct [:id, :payer, :amount, :operation_id]
+  end
 end

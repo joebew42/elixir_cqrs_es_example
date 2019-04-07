@@ -15,7 +15,7 @@ defmodule Bank.TransferOperationServerTest do
   end
 
   test "delegates the process manager to handle the event" do
-    expect(ProcessManager, :handle, fn _event, _state -> %{} end)
+    expect(ProcessManager, :on, fn _event, _state -> %{} end)
 
     publish("AN EVENT")
 

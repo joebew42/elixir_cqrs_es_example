@@ -3,5 +3,5 @@ defmodule Bank.ProcessManager do
   @type state() :: map()
   @type new_state() :: map()
 
-  @callback handle(event(), state()) :: new_state()
+  @callback on(event(), state()) :: new_state()
 end

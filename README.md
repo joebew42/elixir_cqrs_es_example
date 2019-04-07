@@ -38,6 +38,10 @@ mix test --only acceptance
 
 ## Questions & TODOs
 
+- `CommandBus.publish` should be `send`, better to extract a behaviour for the commandbus
+  - Maybe we don't need a command bus to subscribe on. Think about ...
+- How to deal with the state of the Process Manager when replaying events?
+  - It seems that [Process Managers can persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
 - Inject collaborators instead of using functions
 - Probably the `EventHandler` is the [`ReadModel`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
 - Try to add a policy for event conflicts resolution

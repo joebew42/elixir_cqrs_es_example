@@ -11,7 +11,7 @@ defmodule Bank.TransferOperationServer do
   end
 
   def handle_cast(event, state) do
-    new_state = process_manager().handle(event, state)
+    new_state = process_manager().on(event, state)
 
     {:noreply, new_state}
   end
