@@ -1,8 +1,7 @@
 defmodule Bank.AccountTest do
   use ExUnit.Case, async: true
 
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawalDeclined,
-                    MoneyWithdrawn, TransferOperationOpened, TransferOperationDeclined}
+  alias Bank.Events
   alias Bank.Account
 
   describe "#new" do
@@ -11,7 +10,7 @@ defmodule Bank.AccountTest do
         %Account{}
         |> Account.new("Joe")
 
-      assert account |> contain_change?(%AccountCreated{id: "Joe"})
+      assert account |> contain_change?(%Events.AccountCreated{id: "Joe"})
     end
   end
 
@@ -22,7 +21,7 @@ defmodule Bank.AccountTest do
         |> Account.new("Joe")
         |> Account.deposit(100)
 
-      assert account |> contain_change?(%MoneyDeposited{id: "Joe", amount: 100})
+      assert account |> contain_change?(%Events.MoneyDeposited{id: "Joe", amount: 100})
     end
   end
 
@@ -33,7 +32,7 @@ defmodule Bank.AccountTest do
         |> Account.new("Joe")
         |> Account.withdraw(100)
 
-      assert account |> contain_change?(%MoneyWithdrawalDeclined{id: "Joe", amount: 100})
+      assert account |> contain_change?(%Events.MoneyWithdrawalDeclined{id: "Joe", amount: 100})
     end
 
     test "produces a MoneyWithdrawn" do
@@ -43,7 +42,7 @@ defmodule Bank.AccountTest do
         |> Account.deposit(100)
         |> Account.withdraw(100)
 
-      assert account |> contain_change?(%MoneyWithdrawn{id: "Joe", amount: 100})
+      assert account |> contain_change?(%Events.MoneyWithdrawn{id: "Joe", amount: 100})
     end
   end
 
@@ -56,7 +55,7 @@ defmodule Bank.AccountTest do
         |> Account.transfer(100, "A_PAYEE", "AN_OPERATION_ID")
 
       expected_change =
-        %TransferOperationOpened{
+        %Events.TransferOperationOpened{
           id: "Joe",
           amount: 100,
           payee: "A_PAYEE",
@@ -73,7 +72,7 @@ defmodule Bank.AccountTest do
         |> Account.transfer(100, "A_PAYEE", "AN_OPERATION_ID")
 
       expected_change =
-        %TransferOperationDeclined{
+        %Events.TransferOperationDeclined{
           id: "Joe",
           amount: 100,
           payee: "A_PAYEE",
@@ -88,9 +87,9 @@ defmodule Bank.AccountTest do
   describe "#load_from_events" do
     test "load the state from events" do
       events = [
-        %MoneyWithdrawn{id: "Joe", amount: 50},
-        %MoneyDeposited{id: "Joe", amount: 100},
-        %AccountCreated{id: "Joe"},
+        %Events.MoneyWithdrawn{id: "Joe", amount: 50},
+        %Events.MoneyDeposited{id: "Joe", amount: 100},
+        %Events.AccountCreated{id: "Joe"},
       ]
 
       assert Account.load_from_events(events) == %Account{
