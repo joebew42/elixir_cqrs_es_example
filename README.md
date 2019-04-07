@@ -26,8 +26,11 @@ mix test --only acceptance
 
 - Create and example of how a money transfer between two bank accounts could be
   - Now that I can send a `TransferOperationOpened` I could be able to finalize the transaction
-    - Should I use the concept of [Process Managers](https://www.infoq.com/news/2017/07/process-managers-event-flows)? Where we have a Process Manager for each operation_id?
-    - Is the money transfer a long running process?
+    - Should I use the concept of Process Managers ? Where we have a Process Manager for each operation_id?
+    - Is the money transfer a long running
+  - References about Process Manager
+    - [EIP](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html)
+    - [Process Manager and Events Flow](https://www.infoq.com/news/2017/07/process-managers-event-flows)
 
 ## Questions & TODOs
 
