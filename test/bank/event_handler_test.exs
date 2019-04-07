@@ -3,8 +3,7 @@ defmodule Bank.EventHandlerTest do
 
   import Mox
 
-  alias Bank.Events.{AccountCreated, MoneyDeposited, MoneyWithdrawn,
-                    TransferOperationOpened}
+  alias Bank.Events
 
   alias Bank.AccountReadModelMock, as: AccountReadModel
 
@@ -20,7 +19,7 @@ defmodule Bank.EventHandlerTest do
   test "Initialize the account on AccountCreated event" do
     expect(AccountReadModel, :save, fn %{id: "Joe", available_balance: 0, account_balance: 0} -> :ok end)
 
-    publish(%AccountCreated{id: "Joe"})
+    publish(%Events.AccountCreated{id: "Joe"})
 
     verify!(AccountReadModel)
   end
@@ -30,7 +29,7 @@ defmodule Bank.EventHandlerTest do
     |> expect(:find, fn("Joe") -> {:ok, %{id: "Joe", available_balance: 0, account_balance: 0}} end)
     |> expect(:save, fn %{id: "Joe", available_balance: 10, account_balance: 10} -> :ok end)
 
-    publish(%MoneyDeposited{id: "Joe", amount: 10})
+    publish(%Events.MoneyDeposited{id: "Joe", amount: 10})
 
     verify!(AccountReadModel)
   end
@@ -40,7 +39,7 @@ defmodule Bank.EventHandlerTest do
     |> expect(:find, fn("Joe") -> {:ok, %{id: "Joe", available_balance: 10, account_balance: 10}} end)
     |> expect(:save, fn %{id: "Joe", available_balance: 0, account_balance: 0} -> :ok end)
 
-    publish(%MoneyWithdrawn{id: "Joe", amount: 10})
+    publish(%Events.MoneyWithdrawn{id: "Joe", amount: 10})
 
     verify!(AccountReadModel)
   end
@@ -50,7 +49,7 @@ defmodule Bank.EventHandlerTest do
     |> expect(:find, fn("Joe") -> {:ok, %{id: "Joe", available_balance: 10, account_balance: 10}} end)
     |> expect(:save, fn %{id: "Joe", available_balance: 10, account_balance: 0} -> :ok end)
 
-    publish(%TransferOperationOpened{id: "Joe", amount: 10, payee: "Someone", operation_id: "an operation id"})
+    publish(%Events.TransferOperationOpened{id: "Joe", amount: 10, payee: "Someone", operation_id: "an operation id"})
 
     verify!(AccountReadModel)
   end
