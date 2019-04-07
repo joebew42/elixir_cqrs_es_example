@@ -28,6 +28,11 @@ mix test --only acceptance
 
 ## Questions & TODOs
 
+- Try to add a policy for event conflicts resolution
+  - https://tech.zilverline.com/2012/08/08/simple-event-sourcing-conflict-resolution-part-4
+  - https://medium.com/@teivah/event-sourcing-and-concurrent-updates-32354ec26a4c
+  - http://danielwhittaker.me/2014/09/29/handling-concurrency-issues-cqrs-event-sourced-system/
+  - https://dzone.com/articles/the-good-of-event-sourcing-conflict-handling-repli
 - In order to reduce the concurrency exception, one solution could be to serialize the execution of commands related to the same aggregate id
   - At the moment the TaskSupervisor is disabled
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
