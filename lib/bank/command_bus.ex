@@ -1,14 +1,8 @@
 defmodule Bank.CommandBus do
+  @type command() :: struct()
+  @type command_handlers() :: map()
+  @type result() :: :ok | :nothing
 
-  @default_handlers Application.get_env(:elixir_cqrs_es_example, :command_handlers)
-
-  def send(command, handlers \\ @default_handlers) do
-    command_handler = handler_for(command.__struct__, handlers)
-    command_handler.handle(command)
-  end
-
-  defp handler_for(command_name, handlers) do
-    handlers
-    |> Map.get(command_name, Bank.CommandHandlers.Null)
-  end
+  @callback send(command()) :: result()
+  @callback send(command(), command_handlers()) :: result()
 end

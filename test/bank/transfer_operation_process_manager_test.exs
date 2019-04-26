@@ -4,6 +4,7 @@ defmodule Bank.TransferOperationProcessManagerTest do
   import Mox
 
   alias Bank.Events
+  alias Bank.CommandBusMock, as: CommandBus
 
   alias Bank.TransferOperationProcessManager, as: ProcessManager
 
@@ -21,6 +22,8 @@ defmodule Bank.TransferOperationProcessManagerTest do
     end
 
     test "the operation goes to the state pending_confirmation", %{event: transfer_operation_opened} do
+      stub(CommandBus, :send, fn(_) -> :ok end)
+
       new_state = ProcessManager.on(transfer_operation_opened, %{})
 
       assert new_state == %{
@@ -36,11 +39,11 @@ defmodule Bank.TransferOperationProcessManagerTest do
         operation_id: transfer_operation_opened.operation_id
       }
 
-      expect(Bank.CommandBus, :publish, fn(^command) -> :ok end)
+      expect(CommandBus, :send, fn(^command) -> :ok end)
 
       ProcessManager.on(transfer_operation_opened, %{})
 
-      verify!(Bank.CommandBus)
+      verify!(CommandBus)
     end
   end
 end

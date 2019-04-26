@@ -1,8 +1,8 @@
 defmodule Bank.Client do
 
   alias Bank.Commands.{CreateAccount, DepositMoney, WithdrawMoney, TransferMoney}
-  alias Bank.CommandBus
 
+  alias Bank.DefaultCommandBus, as: CommandBus
   alias Bank.InMemoryAccountReadModel, as: AccountReadModel
 
   def create_account(name) do

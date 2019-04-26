@@ -38,9 +38,8 @@ mix test --only acceptance
 
 ## Questions & TODOs
 
+- Should the `CommandBus` [raise exceptions](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/FakeBus.cs)?
 - What about the idea to use a `ProcessId` (or `CommandId`) to identify or remember the [originator of the command in the event](http://danielwhittaker.me/2014/10/18/6-code-smells-cqrs-events-avoid/)?
-- `CommandBus.publish` should be `send`, better to extract a behaviour for the commandbus
-  - Maybe we don't need a command bus to subscribe on. Think about ...
 - How to deal with the state of the Process Manager when replaying events?
   - It seems that [Process Managers can persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
 - Inject collaborators instead of using functions
@@ -72,6 +71,8 @@ mix test --only acceptance
 
 ## DONE
 
+- `CommandBus.publish` should be `send`, better to extract a behaviour for the commandbus
+  - Maybe we don't need a command bus to subscribe on. Think about ...
 - Introduce the concept of `Account Balance` and `Available Balance`
 - Do not use the task supervisor for now
 - Move default_handlers as configuration

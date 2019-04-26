@@ -1,7 +1,5 @@
-defmodule Bank.CommandBusTest do
+defmodule Bank.DefaultCommandBusTest do
   use ExUnit.Case, async: true
-
-  import Mox
 
   defmodule ACommand do
     defstruct [:a_field]
@@ -11,9 +9,11 @@ defmodule Bank.CommandBusTest do
     defstruct [:another_field]
   end
 
+  import Mox
+
   alias Bank.CommandHandlerMock, as: CommandHandler
 
-  alias Bank.CommandBus
+  alias Bank.DefaultCommandBus, as: CommandBus
 
   setup do
     %{handlers: %{
