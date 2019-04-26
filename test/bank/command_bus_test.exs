@@ -1,24 +1,43 @@
 defmodule Bank.CommandBusTest do
   use ExUnit.Case, async: true
 
+  import Mox
+
+  defmodule ACommand do
+    defstruct [:a_field]
+  end
+
+  defmodule AnotherCommand do
+    defstruct [:another_field]
+  end
+
+  alias Bank.CommandHandlerMock, as: CommandHandler
+
   alias Bank.CommandBus
 
   setup do
-    start_supervised CommandBus
-    :ok
+    %{handlers: %{
+      ACommand => CommandHandler
+    }}
   end
 
-  test "not subscribed handler do not receive events" do
-    CommandBus.publish({:create_account, "joe"})
+  test "when a handler is defined the command is handled", %{handlers: handlers} do
+    expect(CommandHandler, :handle, fn(%ACommand{a_field: "something"}) -> :ok end)
 
-    refute_receive {:create_account, "joe"}
+    CommandBus.send(%ACommand{a_field: "something"}, handlers)
+
+    verify!(CommandHandler)
   end
 
-  test "subscribed handler receive events" do
-    CommandBus.subscribe(self())
+  test "when no handler is defined the command is not handled", %{handlers: handlers} do
+    expect_never(CommandHandler, :handle, fn(%AnotherCommand{another_field: "something"}) -> :ok end)
 
-    CommandBus.publish({:create_account, "joe"})
+    CommandBus.send(%AnotherCommand{another_field: "something"}, handlers)
 
-    assert_receive {_, {:create_account, "joe"}}
+    verify!(CommandHandler)
+  end
+
+  defp expect_never(mock, name, code) do
+    expect(mock, name, 0, code)
   end
 end

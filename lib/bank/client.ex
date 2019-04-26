@@ -6,19 +6,19 @@ defmodule Bank.Client do
   alias Bank.InMemoryAccountReadModel, as: AccountReadModel
 
   def create_account(name) do
-    CommandBus.publish(%CreateAccount{id: name})
+    CommandBus.send(%CreateAccount{id: name})
   end
 
   def deposit(name, amount) do
-    CommandBus.publish(%DepositMoney{id: name, amount: amount})
+    CommandBus.send(%DepositMoney{id: name, amount: amount})
   end
 
   def withdraw(name, amount) do
-    CommandBus.publish(%WithdrawMoney{id: name, amount: amount})
+    CommandBus.send(%WithdrawMoney{id: name, amount: amount})
   end
 
   def transfer(from, to, amount) do
-    CommandBus.publish(%TransferMoney{id: from, amount: amount, payee: to, operation_id: UUID.uuid1()})
+    CommandBus.send(%TransferMoney{id: from, amount: amount, payee: to, operation_id: UUID.uuid1()})
   end
 
   def available_balance(name) do
