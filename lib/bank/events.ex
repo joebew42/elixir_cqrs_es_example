@@ -22,4 +22,8 @@ defmodule Bank.Events do
   defmodule TransferOperationDeclined do
     defstruct [:id, :amount, :payee, :operation_id, :reason]
   end
+
+  defmodule TransferOperationConfirmed do
+    defstruct [:id, :amount, :payer, :operation_id]
+  end
 end

@@ -54,6 +54,16 @@ defmodule Bank.EventHandlerTest do
     verify!(AccountReadModel)
   end
 
+  test "Update the balance on TransferOperationConfirmed event" do
+    AccountReadModel
+    |> expect(:find, fn("Joe") -> {:ok, %{id: "Joe", available_balance: 0, account_balance: 0}} end)
+    |> expect(:save, fn %{id: "Joe", available_balance: 10, account_balance: 10} -> :ok end)
+
+    publish(%Events.TransferOperationConfirmed{id: "Joe", amount: 10, payer: "Someone", operation_id: "an operation id"})
+
+    verify!(AccountReadModel)
+  end
+
   defp publish(event) do
     Bank.EventBus.publish(event)
     Process.sleep(10)

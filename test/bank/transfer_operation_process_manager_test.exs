@@ -46,4 +46,13 @@ defmodule Bank.TransferOperationProcessManagerTest do
       verify!(CommandBus)
     end
   end
+
+  describe "on a not handled event" do
+    test "does not change the current state" do
+      current_state = %{}
+      new_state = ProcessManager.on(:not_handled_event, current_state)
+
+      assert new_state == current_state
+    end
+  end
 end

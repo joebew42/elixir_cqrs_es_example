@@ -43,7 +43,7 @@ mix test --only acceptance
 - How to deal with the state of the Process Manager when replaying events?
   - It seems that [Process Managers can persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
 - Inject collaborators instead of using functions
-- Probably the `EventHandler` is the [`ReadModel`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
+- Probably the `EventHandler` is the [`AccountProjections`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
 - Try to add a policy for event conflicts resolution
   - https://tech.zilverline.com/2012/08/08/simple-event-sourcing-conflict-resolution-part-4
   - https://medium.com/@teivah/event-sourcing-and-concurrent-updates-32354ec26a4c
@@ -63,10 +63,6 @@ mix test --only acceptance
   - Consider to use [Task](https://hexdocs.pm/elixir/Task.html)s
 - Consider to save the latest version as a detail for the read model
 - Improve the setup of the acceptance test
-- Should the `CommandHandler` return errors?
-- `Bank` will act as a client that will send commands
-- When handle the `deposit_money` command we should check if the `account` process is running
-- `EventBus` and `CommandBus` are quite similar
 - Consider to run a `mix format` to see what happen :)
 
 ## DONE
@@ -113,8 +109,12 @@ mix test --only acceptance
 - Consider to return an `EventStream` instead of a list when doing `Account.changes(...)`
 - `Accounts` should be a `BankService`. It is stateless and will collaborate with the `AccountRepository`
 
-## TRASHED
+## TRASHED / NOT NEEDED
 
+- Should the `CommandHandler` return errors?
+- `Bank` will act as a client that will send commands
+- When handle the `deposit_money` command we should check if the `account` process is running
+- `EventBus` and `CommandBus` are quite similar
 - What about an `AccountRepository` to `find` and `save` accounts?
 - When to flush all the `changes` of the `Account`?
 - Does `Account`s may to be supervised?
@@ -122,6 +122,10 @@ mix test --only acceptance
 - Elixir: Is it possible to configure the application through environment variables?
 - Maybe the responsabilities to `create` and `find` an `Account` should be delegated to the `AccountRepository`, and we may think to rename it as `Accounts`?
 - [?] Implement an `EventStoreAccountRepository`
+
+## FINAL NOTES
+
+- At the moment `Account.confirm_transfer_operation` is deliberately simplified. It does not take care of the `payer` and `operation_id`. So, there is no check if the operation is already confirmed, or not.
 
 ## Extras
 

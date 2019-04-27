@@ -16,6 +16,11 @@ defmodule Bank.TransferOperationProcessManager do
     switch(operations, to: :pending_confirmation, for: event.operation_id)
   end
 
+  @impl true
+  def on(_not_handled_event, operations) do
+    operations
+  end
+
   defp switch(operations, to: next_state, for: operation_id) do
     Map.put(operations, operation_id, next_state)
   end

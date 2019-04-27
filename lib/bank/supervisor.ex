@@ -9,6 +9,7 @@ defmodule Bank.Supervisor do
     children = [
       Bank.EventBus,
       Bank.EventHandler,
+      Bank.TransferOperationServer,
       Bank.InMemoryEventStore,
       Bank.InMemoryAccountReadModel
     ]

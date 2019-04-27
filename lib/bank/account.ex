@@ -44,6 +44,18 @@ defmodule Bank.Account do
     apply_new_event(new_event, state)
   end
 
+  def confirm_transfer_operation(%__MODULE__{id: id} = state, amount, payer, operation_id) do
+    new_event =
+      %Events.TransferOperationConfirmed{
+        id: id,
+        amount: amount,
+        payer: payer,
+        operation_id: operation_id
+      }
+
+    apply_new_event(new_event, state)
+  end
+
   defp apply_new_event(event, state) do
     new_state = apply_event(event, state)
 
@@ -82,5 +94,12 @@ defmodule Bank.Account do
 
   defp apply_event(%Events.TransferOperationDeclined{}, state) do
     state
+  end
+
+  defp apply_event(%Events.TransferOperationConfirmed{amount: amount}, state) do
+    %__MODULE__{state |
+      available_balance: state.available_balance + amount,
+      account_balance: state.account_balance + amount
+    }
   end
 end

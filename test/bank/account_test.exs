@@ -84,6 +84,27 @@ defmodule Bank.AccountTest do
     end
   end
 
+  describe "#confirm_transfer_operation" do
+    test "produces a TransferOperationConfirmed and update the balance" do
+      account =
+        %Account{}
+        |> Account.new("Joe")
+        |> Account.confirm_transfer_operation(100, "A_PAYER", "AN_OPERATION_ID")
+
+      expected_change =
+        %Events.TransferOperationConfirmed{
+          id: "Joe",
+          amount: 100,
+          payer: "A_PAYER",
+          operation_id: "AN_OPERATION_ID"
+        }
+
+      assert account |> contain_change?(expected_change)
+      assert account.available_balance == 100
+      assert account.account_balance == 100
+    end
+  end
+
   describe "#load_from_events" do
     test "load the state from events" do
       events = [

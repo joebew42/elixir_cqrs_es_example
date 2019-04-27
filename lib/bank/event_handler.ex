@@ -60,6 +60,19 @@ defmodule Bank.EventHandler do
     {:noreply, state}
   end
 
+  def handle_cast(%Events.TransferOperationConfirmed{id: id, amount: amount}, state) do
+    {:ok, account_view} = account_read_model().find(id)
+
+    updated_account_view =
+      account_view
+      |> Map.put(:available_balance, account_view.available_balance + amount)
+      |> Map.put(:account_balance, account_view.account_balance + amount)
+
+    account_read_model().save(updated_account_view)
+
+    {:noreply, state}
+  end
+
   def handle_cast(_unhandled_event, state) do
     {:noreply, state}
   end
