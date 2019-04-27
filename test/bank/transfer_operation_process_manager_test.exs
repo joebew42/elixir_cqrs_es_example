@@ -47,6 +47,12 @@ defmodule Bank.TransferOperationProcessManagerTest do
     end
   end
 
+  describe "on TransferOperationConfirmed" do
+    test "TODO" do
+      assert false
+    end
+  end
+
   describe "on a not handled event" do
     test "does not change the current state" do
       current_state = %{}
