@@ -48,8 +48,42 @@ defmodule Bank.TransferOperationProcessManagerTest do
   end
 
   describe "on TransferOperationConfirmed" do
-    test "TODO" do
-      assert false
+    setup do
+      transfer_operation_confirmed =
+        %Events.TransferOperationConfirmed{
+          id: "payee_account",
+          amount: 100,
+          payer: "payer_account",
+          operation_id: "OPERATION_ID"
+        }
+
+      %{event: transfer_operation_confirmed}
+    end
+
+    test "the operation goes to the state complete", %{event: transfer_operation_confirmed} do
+      stub(CommandBus, :send, fn(_) -> :ok end)
+
+      current_state = %{ "OPERATION_ID" => :pending_confirmation }
+      new_state = ProcessManager.on(transfer_operation_confirmed, current_state)
+
+      assert new_state == %{
+        "OPERATION_ID" => :complete
+      }
+    end
+
+    test "a command is sent to the payer to complete the operation", %{event: transfer_operation_confirmed} do
+      command = %Bank.Commands.CompleteTransferOperation{
+        id: transfer_operation_confirmed.payer,
+        payee: transfer_operation_confirmed.id,
+        amount: transfer_operation_confirmed.amount,
+        operation_id: transfer_operation_confirmed.operation_id
+      }
+
+      expect(CommandBus, :send, fn(^command) -> :ok end)
+
+      ProcessManager.on(transfer_operation_confirmed, %{})
+
+      verify!(CommandBus)
     end
   end
 

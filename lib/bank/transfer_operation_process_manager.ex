@@ -17,6 +17,18 @@ defmodule Bank.TransferOperationProcessManager do
   end
 
   @impl true
+  def on(%Events.TransferOperationConfirmed{} = event, %{} = operations) do
+    :ok = command_bus().send(%Commands.CompleteTransferOperation{
+      id: event.payer,
+      payee: event.id,
+      amount: event.amount,
+      operation_id: event.operation_id
+    })
+
+    switch(operations, to: :complete, for: event.operation_id)
+  end
+
+  @impl true
   def on(_not_handled_event, operations) do
     operations
   end
