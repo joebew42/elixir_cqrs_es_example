@@ -71,14 +71,18 @@ defmodule Bank.AcceptanceTest do
     Application.stop(app)
     Application.start(app)
 
+    :ok = Application.put_env(app, :command_bus, Bank.DefaultCommandBus)
     :ok = Application.put_env(app, :event_store, Bank.InMemoryEventStore)
     :ok = Application.put_env(app, :event_publisher, Bank.EventBusPublisher)
     :ok = Application.put_env(app, :account_read_model, Bank.InMemoryAccountReadModel)
+    :ok = Application.put_env(app, :transfer_operation_process_manager, Bank.TransferOperationProcessManager)
 
     on_exit(fn ->
+      :ok = Application.put_env(app, :command_bus, Bank.CommandBusMock)
       :ok = Application.put_env(app, :event_store, Bank.EventStoreMock)
       :ok = Application.put_env(app, :event_publisher, Bank.EventPublisherMock)
       :ok = Application.put_env(app, :account_read_model, Bank.AccountReadModelMock)
+      :ok = Application.put_env(app, :transfer_operation_process_manager, Bank.ProcessManagerMock)
     end)
 
     :ok
