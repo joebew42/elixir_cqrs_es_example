@@ -29,17 +29,18 @@ mix test --only acceptance
 
 ## Questions & TODOs
 
-- Probably the `Account` is identified by a code. The person (e.g. the name) should be a reference to an external entity (e.g. the `Owner`, `owner_id`)
-- Whenever I want to confirm or complete a transfer operation there is no check at aggregate level (e.g. from the payer perspective: is there a `TransferOperationOpened` when the aggregate receive a `CompleteTransferOperation`?)
-- Should the `CommandBus` [raise exceptions](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/FakeBus.cs)?
-  - How to define this with TypeSpec?
-- What about the idea to use a `ProcessId` (or `CommandId`) to identify or remember the [originator of the command in the event](http://danielwhittaker.me/2014/10/18/6-code-smells-cqrs-events-avoid/)?
-- How to deal with the state of the Process Manager when replaying events?
-  - [Process Managers should persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
-- Inject collaborators instead of using functions
 - Probably the `EventHandler` is the [`AccountProjections`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
 - Add a new projection that provide the list of all the available accounts with the current account balance
 - Add a new projection that provide the list of all operations made on a specific account
+- Probably the `Account` is identified by a code. The person (e.g. the name) should be a reference to an external entity (e.g. the `Owner`, `owner_id`)
+- Whenever I want to confirm or complete a transfer operation there is no check at aggregate level (e.g. from the payer perspective: is there a `TransferOperationOpened` when the aggregate receive a `CompleteTransferOperation`?)
+- At the moment there is no check for the state transition for a transfer operation in the `TransferOperationProcessManager`
+- How to deal with the state of the Process Manager when replaying events?
+  - [Process Managers should persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
+- Should the `CommandBus` [raise exceptions](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/FakeBus.cs)?
+  - How to define this with TypeSpec?
+- What about the idea to use a `ProcessId` (or `CommandId`) to identify or remember the [originator of the command in the event](http://danielwhittaker.me/2014/10/18/6-code-smells-cqrs-events-avoid/)?
+- Inject collaborators instead of using functions
 - Try to add a policy for event conflicts resolution
   - https://tech.zilverline.com/2012/08/08/simple-event-sourcing-conflict-resolution-part-4
   - https://medium.com/@teivah/event-sourcing-and-concurrent-updates-32354ec26a4c
