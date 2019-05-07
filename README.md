@@ -26,6 +26,7 @@ mix test --only acceptance
 
 - Introduce the use of a GUID for the aggregateId
   - In this case probably is the `Bank.Client` that have to generate the GUID based on the `name` (to guarantee the uniqueness of `name`)?
+  - Probably the `Account` is identified by a code. The person (e.g. the name) should be a reference to an external entity (e.g. the `Owner`, `owner_id`)
 
 ## Questions & TODOs
 
