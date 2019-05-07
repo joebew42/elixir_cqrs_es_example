@@ -33,6 +33,8 @@ mix test --only acceptance
   - It seems that [Process Managers can persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
 - Inject collaborators instead of using functions
 - Probably the `EventHandler` is the [`AccountProjections`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
+- Add a new projection that provide the list of all the available accounts with the current account balance
+- Add a new projection that provide the list of all operations made on a specific account
 - Try to add a policy for event conflicts resolution
   - https://tech.zilverline.com/2012/08/08/simple-event-sourcing-conflict-resolution-part-4
   - https://medium.com/@teivah/event-sourcing-and-concurrent-updates-32354ec26a4c
