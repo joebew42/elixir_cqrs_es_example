@@ -24,7 +24,7 @@ mix test --only acceptance
 
 ## DOING
 
-- Add the `CompleteTransferOperation` command handler
+- Update the `Account` view on `TransferOperationCompleted`
 
 ## Questions & TODOs
 
@@ -56,6 +56,7 @@ mix test --only acceptance
 
 ## DONE
 
+- Add the `CompleteTransferOperation` command handler
 - Create and example of how a money transfer between two bank accounts could be
   - Introduce a `TransferOperationManager` ...
     - Try to [separate the implementation from the domain logic](https://pragdave.me/blog/2017/07/13/decoupling-interface-and-implementation-in-elixir.html)

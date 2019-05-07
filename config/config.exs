@@ -6,7 +6,8 @@ config :elixir_cqrs_es_example,
     Bank.Commands.DepositMoney => Bank.CommandHandlers.DepositMoney,
     Bank.Commands.WithdrawMoney => Bank.CommandHandlers.WithdrawMoney,
     Bank.Commands.TransferMoney => Bank.CommandHandlers.TransferMoney,
-    Bank.Commands.ConfirmTransferOperation => Bank.CommandHandlers.ConfirmTransferOperation
+    Bank.Commands.ConfirmTransferOperation => Bank.CommandHandlers.ConfirmTransferOperation,
+    Bank.Commands.CompleteTransferOperation => Bank.CommandHandlers.CompleteTransferOperation
   }
 
 import_config "#{Mix.env()}.exs"
