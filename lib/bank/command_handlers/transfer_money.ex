@@ -6,13 +6,13 @@ defmodule Bank.CommandHandlers.TransferMoney do
 
   @impl true
   def handle(%TransferMoney{} = command) do
-    case event_store().load_event_stream(command.id) do
+    case event_store().load_event_stream(command.account_id) do
       {:ok, version, events} ->
         account =
           Account.load_from_events(events)
           |> Account.transfer(command.amount, command.payee, command.operation_id)
 
-        :ok = event_store().append_to_stream(command.id, version, account.changes)
+        :ok = event_store().append_to_stream(command.account_id, version, account.changes)
       {:error, :not_found} ->
         :nothing
     end

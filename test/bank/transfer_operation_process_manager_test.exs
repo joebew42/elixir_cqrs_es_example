@@ -33,7 +33,7 @@ defmodule Bank.TransferOperationProcessManagerTest do
 
     test "a command is sent to the payee to confirm the operation", %{event: transfer_operation_opened} do
       command = %Bank.Commands.ConfirmTransferOperation{
-        id: transfer_operation_opened.payee,
+        account_id: transfer_operation_opened.payee,
         payer: transfer_operation_opened.id,
         amount: transfer_operation_opened.amount,
         operation_id: transfer_operation_opened.operation_id
@@ -73,7 +73,7 @@ defmodule Bank.TransferOperationProcessManagerTest do
 
     test "a command is sent to the payer to complete the operation", %{event: transfer_operation_confirmed} do
       command = %Bank.Commands.CompleteTransferOperation{
-        id: transfer_operation_confirmed.payer,
+        account_id: transfer_operation_confirmed.payer,
         payee: transfer_operation_confirmed.id,
         amount: transfer_operation_confirmed.amount,
         operation_id: transfer_operation_confirmed.operation_id

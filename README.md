@@ -24,8 +24,7 @@ mix test --only acceptance
 
 ## DOING
 
-- Introduce the use of a GUID for the aggregateId
-  - In this case probably is the `Bank.Client` that have to generate the GUID based on the `name` (to guarantee the uniqueness of `name`)?
+- Replace `id` with `aggregate_id` (or `source_id`) in the `Event` definition
 
 ## Questions & TODOs
 
@@ -61,6 +60,8 @@ mix test --only acceptance
 
 ## DONE
 
+- Introduce the use of a GUID for the aggregateId
+  - In this case probably is the `Bank.Client` that have to generate the GUID based on the `name` (to guarantee the uniqueness of `name`)?
 - Update the `Account` view on `TransferOperationCompleted`
 - Add the `CompleteTransferOperation` command handler
 - Create and example of how a money transfer between two bank accounts could be

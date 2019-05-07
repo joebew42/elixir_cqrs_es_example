@@ -5,16 +5,16 @@ defmodule Bank.CommandHandlers.CreateAccount do
   alias Bank.Account
 
   @impl true
-  def handle(%CreateAccount{} = command) do
-    case event_store().load_event_stream(command.id) do
+  def handle(%CreateAccount{account_id: account_id, name: name}) do
+    case event_store().load_event_stream(account_id) do
       {:ok, _version, _changes} ->
         :nothing
       {:error, :not_found} ->
         account =
           %Account{}
-          |> Account.new(command.id)
+          |> Account.new(account_id, name)
 
-        :ok = event_store().append_to_stream(command.id, -1, account.changes)
+        :ok = event_store().append_to_stream(account_id, -1, account.changes)
     end
   end
 

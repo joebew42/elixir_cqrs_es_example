@@ -11,20 +11,32 @@ defmodule Bank.CommandHandlers.CreateAccountTest do
 
   test "it does not create an account when it already exists" do
     EventStore
-    |> expect(:load_event_stream, fn "Joe" -> {:ok, 0, []} end)
-    |> expect_never(:append_to_stream, fn "Joe", _version, _changes -> :ok end)
+    |> expect(:load_event_stream, fn "AN ACCOUNT ID" -> {:ok, 0, []} end)
+    |> expect_never(:append_to_stream, fn "AN ACCOUNT ID", _version, _changes -> :ok end)
 
-    :nothing = CreateAccount.handle(%Commands.CreateAccount{id: "Joe"})
+    command =
+      %Commands.CreateAccount{
+        account_id: "AN ACCOUNT ID",
+        name: "AN ACCOUNT NAME"
+      }
+
+    :nothing = CreateAccount.handle(command)
 
     verify!(EventStore)
   end
 
   test "it creates an account when not exists" do
     EventStore
-    |> expect(:load_event_stream, fn "Joe" -> {:error, :not_found} end)
-    |> expect(:append_to_stream, fn "Joe", -1, [%Events.AccountCreated{id: "Joe"}] -> :ok end)
+    |> expect(:load_event_stream, fn "AN ACCOUNT ID" -> {:error, :not_found} end)
+    |> expect(:append_to_stream, fn "AN ACCOUNT ID", -1, [%Events.AccountCreated{id: "AN ACCOUNT ID", name: "AN ACCOUNT NAME"}] -> :ok end)
 
-    :ok = CreateAccount.handle(%Commands.CreateAccount{id: "Joe"})
+    command =
+      %Commands.CreateAccount{
+        account_id: "AN ACCOUNT ID",
+        name: "AN ACCOUNT NAME"
+      }
+
+    :ok = CreateAccount.handle(command)
 
     verify!(EventStore)
   end

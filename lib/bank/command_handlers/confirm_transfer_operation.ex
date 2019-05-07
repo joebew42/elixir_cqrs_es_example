@@ -6,13 +6,13 @@ defmodule Bank.CommandHandlers.ConfirmTransferOperation do
 
   @impl true
   def handle(%ConfirmTransferOperation{} = command) do
-    {:ok, version, events} = event_store().load_event_stream(command.id)
+    {:ok, version, events} = event_store().load_event_stream(command.account_id)
 
     account =
       Account.load_from_events(events)
       |> Account.confirm_transfer_operation(command.amount, command.payer, command.operation_id)
 
-    :ok = event_store().append_to_stream(command.id, version, account.changes)
+    :ok = event_store().append_to_stream(command.account_id, version, account.changes)
   end
 
   defp event_store() do

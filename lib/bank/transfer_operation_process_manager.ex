@@ -7,7 +7,7 @@ defmodule Bank.TransferOperationProcessManager do
   @impl true
   def on(%Events.TransferOperationOpened{} = event, %{} = operations) do
     :ok = command_bus().send(%Commands.ConfirmTransferOperation{
-      id: event.payee,
+      account_id: event.payee,
       payer: event.id,
       amount: event.amount,
       operation_id: event.operation_id
@@ -19,7 +19,7 @@ defmodule Bank.TransferOperationProcessManager do
   @impl true
   def on(%Events.TransferOperationConfirmed{} = event, %{} = operations) do
     :ok = command_bus().send(%Commands.CompleteTransferOperation{
-      id: event.payer,
+      account_id: event.payer,
       payee: event.id,
       amount: event.amount,
       operation_id: event.operation_id

@@ -1,10 +1,10 @@
 defmodule Bank.Account do
-  defstruct id: nil, available_balance: 0, account_balance: 0, changes: []
+  defstruct id: nil, name: nil, available_balance: 0, account_balance: 0, changes: []
 
   alias Bank.Events
 
-  def new(%__MODULE__{id: nil} = state, id) do
-    apply_new_event(%Events.AccountCreated{id: id}, state)
+  def new(%__MODULE__{id: nil} = state, id, name) do
+    apply_new_event(%Events.AccountCreated{id: id, name: name}, state)
   end
 
   def deposit(%__MODULE__{id: id} = state, amount) when is_binary(id) do
@@ -78,8 +78,8 @@ defmodule Bank.Account do
     List.foldr(events, %__MODULE__{}, &apply_event(&1, &2))
   end
 
-  defp apply_event(%Events.AccountCreated{id: id}, state) do
-    %__MODULE__{state | id: id}
+  defp apply_event(%Events.AccountCreated{id: id, name: name}, state) do
+    %__MODULE__{state | id: id, name: name}
   end
 
   defp apply_event(%Events.MoneyDeposited{amount: deposited_amount}, state) do

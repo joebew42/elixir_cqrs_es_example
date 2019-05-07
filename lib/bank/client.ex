@@ -6,39 +6,58 @@ defmodule Bank.Client do
   alias Bank.InMemoryAccountReadModel, as: AccountReadModel
 
   def create_account(name) do
-    CommandBus.send(%CreateAccount{id: name})
+    account_id = account_id_for(name)
+
+    CommandBus.send(%CreateAccount{account_id: account_id, name: name})
   end
 
   def deposit(name, amount) do
-    CommandBus.send(%DepositMoney{id: name, amount: amount})
+    account_id = account_id_for(name)
+
+    CommandBus.send(%DepositMoney{account_id: account_id, amount: amount})
   end
 
   def withdraw(name, amount) do
-    CommandBus.send(%WithdrawMoney{id: name, amount: amount})
+    account_id = account_id_for(name)
+
+    CommandBus.send(%WithdrawMoney{account_id: account_id, amount: amount})
   end
 
   def transfer(from, to, amount) do
-    CommandBus.send(%TransferMoney{id: from, amount: amount, payee: to, operation_id: UUID.uuid1()})
+    from_account_id = account_id_for(from)
+    to_account_id = account_id_for(to)
+
+    CommandBus.send(%TransferMoney{account_id: from_account_id, amount: amount, payee: to_account_id, operation_id: UUID.uuid1()})
   end
 
   def available_balance(name) do
-    find_account!(name).available_balance
+    account_id = account_id_for(name)
+
+    find_account!(account_id).available_balance
   end
 
   def account_balance(name) do
-    find_account!(name).account_balance
+    account_id = account_id_for(name)
+
+    find_account!(account_id).account_balance
   end
 
   def status(name) do
-    find_account!(name)
+    account_id = account_id_for(name)
+
+    find_account!(account_id)
   end
 
-  defp find_account!(name) do
-    case AccountReadModel.find(name) do
+  defp find_account!(account_id) do
+    case AccountReadModel.find(account_id) do
       {:ok, account} ->
         account
       {:error, :not_found} ->
-        raise "Account #{inspect(name)} not available"
+        raise "Account #{inspect(account_id)} not available"
     end
+  end
+
+  defp account_id_for(name) do
+    UUID.uuid5(:nil, name)
   end
 end

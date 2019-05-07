@@ -12,9 +12,10 @@ defmodule Bank.EventHandler do
     {:ok, nil}
   end
 
-  def handle_cast(%Events.AccountCreated{id: id}, state) do
+  def handle_cast(%Events.AccountCreated{id: id, name: name}, state) do
     account_read_model().save(%{
       id: id,
+      name: name,
       available_balance: 0,
       account_balance: 0
     })

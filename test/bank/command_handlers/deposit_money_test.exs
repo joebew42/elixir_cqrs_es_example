@@ -11,20 +11,20 @@ defmodule Bank.CommandHandlers.DepositMoneyTest do
 
   test "an amount is deposited" do
     EventStore
-    |> expect(:load_event_stream, fn "Joe" -> {:ok, 0, [%Events.AccountCreated{id: "Joe"}]} end)
-    |> expect(:append_to_stream, fn "Joe", 0, [%Events.MoneyDeposited{id: "Joe", amount: 100}] -> :ok end)
+    |> expect(:load_event_stream, fn "AN ID" -> {:ok, 0, [%Events.AccountCreated{id: "AN ID", name: "A NAME"}]} end)
+    |> expect(:append_to_stream, fn "AN ID", 0, [%Events.MoneyDeposited{id: "AN ID", amount: 100}] -> :ok end)
 
-    :ok = DepositMoney.handle(%Commands.DepositMoney{id: "Joe", amount: 100})
+    :ok = DepositMoney.handle(%Commands.DepositMoney{account_id: "AN ID", amount: 100})
 
     verify!(EventStore)
   end
 
   test "nothing is deposited if the account does not exist" do
     EventStore
-    |> expect(:load_event_stream, fn "Joe" -> {:error, :not_found} end)
-    |> expect_never(:append_to_stream, fn "Joe", 0, [%Events.MoneyDeposited{id: "Joe", amount: 100}] -> :ok end)
+    |> expect(:load_event_stream, fn "AN ID" -> {:error, :not_found} end)
+    |> expect_never(:append_to_stream, fn "AN ID", 0, [%Events.MoneyDeposited{id: "AN ID", amount: 100}] -> :ok end)
 
-    :nothing = DepositMoney.handle(%Commands.DepositMoney{id: "Joe", amount: 100})
+    :nothing = DepositMoney.handle(%Commands.DepositMoney{account_id: "AN ID", amount: 100})
 
     verify!(EventStore)
   end

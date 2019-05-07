@@ -1,25 +1,25 @@
 defmodule Bank.Commands do
   defmodule CreateAccount do
-    defstruct [:id]
+    defstruct [:account_id, :name]
   end
 
   defmodule DepositMoney do
-    defstruct [:id, :amount]
+    defstruct [:account_id, :amount]
   end
 
   defmodule WithdrawMoney do
-    defstruct [:id, :amount]
+    defstruct [:account_id, :amount]
   end
 
   defmodule TransferMoney do
-    defstruct [:id, :amount, :payee, :operation_id]
+    defstruct [:account_id, :amount, :payee, :operation_id]
   end
 
   defmodule ConfirmTransferOperation do
-    defstruct [:id, :payer, :amount, :operation_id]
+    defstruct [:account_id, :payer, :amount, :operation_id]
   end
 
   defmodule CompleteTransferOperation do
-    defstruct [:id, :payee, :amount, :operation_id]
+    defstruct [:account_id, :payee, :amount, :operation_id]
   end
 end

@@ -11,30 +11,30 @@ defmodule Bank.CommandHandlers.WithdrawMoneyTest do
 
   test "nothing is withdrawn if the account does not exist" do
     EventStore
-    |> expect(:load_event_stream, fn "Joe" -> {:error, :not_found} end)
-    |> expect_never(:append_to_stream, fn "Joe", 0, [%Events.MoneyWithdrawn{id: "Joe", amount: 100}] -> :ok end)
+    |> expect(:load_event_stream, fn "AN ID" -> {:error, :not_found} end)
+    |> expect_never(:append_to_stream, fn "AN ID", 0, [%Events.MoneyWithdrawn{id: "AN ID", amount: 100}] -> :ok end)
 
-    :nothing = WithdrawMoney.handle(%Commands.WithdrawMoney{id: "Joe", amount: 100})
+    :nothing = WithdrawMoney.handle(%Commands.WithdrawMoney{account_id: "AN ID", amount: 100})
 
     verify!(EventStore)
   end
 
   test "an amount is withdrawn" do
     EventStore
-    |> expect(:load_event_stream, fn "Joe" -> {:ok, 1, [%Events.AccountCreated{id: "Joe"}, %Events.MoneyDeposited{id: "Joe", amount: 100}]} end)
-    |> expect(:append_to_stream, fn "Joe", 1, [%Events.MoneyWithdrawn{id: "Joe", amount: 100}] -> :ok end)
+    |> expect(:load_event_stream, fn "AN ID" -> {:ok, 1, [%Events.AccountCreated{id: "AN ID", name: "A NAME"}, %Events.MoneyDeposited{id: "AN ID", amount: 100}]} end)
+    |> expect(:append_to_stream, fn "AN ID", 1, [%Events.MoneyWithdrawn{id: "AN ID", amount: 100}] -> :ok end)
 
-    :ok = WithdrawMoney.handle(%Commands.WithdrawMoney{id: "Joe", amount: 100})
+    :ok = WithdrawMoney.handle(%Commands.WithdrawMoney{account_id: "AN ID", amount: 100})
 
     verify!(EventStore)
   end
 
   test "withdraw is declined due insufficient funds" do
     EventStore
-    |> expect(:load_event_stream, fn "Joe" -> {:ok, 1, [%Events.AccountCreated{id: "Joe"}, %Events.MoneyDeposited{id: "Joe", amount: 10}]} end)
-    |> expect(:append_to_stream, fn "Joe", 1, [%Events.MoneyWithdrawalDeclined{id: "Joe", amount: 100}] -> :ok end)
+    |> expect(:load_event_stream, fn "AN ID" -> {:ok, 1, [%Events.AccountCreated{id: "AN ID", name: "A NAME"}, %Events.MoneyDeposited{id: "AN ID", amount: 10}]} end)
+    |> expect(:append_to_stream, fn "AN ID", 1, [%Events.MoneyWithdrawalDeclined{id: "AN ID", amount: 100}] -> :ok end)
 
-    :ok = WithdrawMoney.handle(%Commands.WithdrawMoney{id: "Joe", amount: 100})
+    :ok = WithdrawMoney.handle(%Commands.WithdrawMoney{account_id: "AN ID", amount: 100})
 
     verify!(EventStore)
   end
