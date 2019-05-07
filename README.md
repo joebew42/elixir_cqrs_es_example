@@ -24,6 +24,9 @@ mix test --only acceptance
 
 ## DOING
 
+- Introduce the use of a GUID for the aggregateId
+  - In this case probably is the `Bank.Client` that have to generate the GUID based on the `name` (to guarantee the uniqueness of `name`)?
+
 ## Questions & TODOs
 
 - Whenever I want to confirm or complete a transfer operation there is no check at aggregate level (e.g. from the payer perspective: is there a `TransferOperationOpened` when the aggregate receive a `CompleteTransferOperation`?)
@@ -41,7 +44,6 @@ mix test --only acceptance
   - http://danielwhittaker.me/2014/09/29/handling-concurrency-issues-cqrs-event-sourced-system/
   - https://dzone.com/articles/the-good-of-event-sourcing-conflict-handling-repli
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
-- Introduce the use of a GUID for the aggregateId
 - Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
 - Should the EventDescriptor have the aggregateId?
 - Consider to return the changes from the first to the latest, and also following this order in the event store
