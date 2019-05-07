@@ -35,7 +35,7 @@ mix test --only acceptance
   - How to define this with TypeSpec?
 - What about the idea to use a `ProcessId` (or `CommandId`) to identify or remember the [originator of the command in the event](http://danielwhittaker.me/2014/10/18/6-code-smells-cqrs-events-avoid/)?
 - How to deal with the state of the Process Manager when replaying events?
-  - It seems that [Process Managers can persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
+  - [Process Managers should persist their state](https://tech.just-eat.com/2015/05/26/process-managers/)
 - Inject collaborators instead of using functions
 - Probably the `EventHandler` is the [`AccountProjections`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
 - Add a new projection that provide the list of all the available accounts with the current account balance
