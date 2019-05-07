@@ -24,8 +24,6 @@ mix test --only acceptance
 
 ## DOING
 
-- Update the `Account` view on `TransferOperationCompleted`
-
 ## Questions & TODOs
 
 - Whenever I want to confirm or complete a transfer operation there is no check at aggregate level (e.g. from the payer perspective: is there a `TransferOperationOpened` when the aggregate receive a `CompleteTransferOperation`?)
@@ -56,6 +54,7 @@ mix test --only acceptance
 
 ## DONE
 
+- Update the `Account` view on `TransferOperationCompleted`
 - Add the `CompleteTransferOperation` command handler
 - Create and example of how a money transfer between two bank accounts could be
   - Introduce a `TransferOperationManager` ...
