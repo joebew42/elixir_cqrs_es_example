@@ -24,10 +24,11 @@ mix test --only acceptance
 
 ## DOING
 
-- Replace `id` with `aggregate_id` (or `source_id`) in the `Event` definition
+- Replace "Someone" with "A PAYER ID" or "A PAYEE ID"
 
 ## Questions & TODOs
 
+- Replace `id` with `aggregate_id` (or `source_id`) in the `Event` definition
 - Probably the `EventHandler` is the [`AccountProjections`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
 - Add a new projection that provide the list of all the available accounts with the current account balance
 - Add a new projection that provide the list of all operations made on a specific account
