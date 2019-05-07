@@ -26,10 +26,10 @@ mix test --only acceptance
 
 - Introduce the use of a GUID for the aggregateId
   - In this case probably is the `Bank.Client` that have to generate the GUID based on the `name` (to guarantee the uniqueness of `name`)?
-  - Probably the `Account` is identified by a code. The person (e.g. the name) should be a reference to an external entity (e.g. the `Owner`, `owner_id`)
 
 ## Questions & TODOs
 
+- Probably the `Account` is identified by a code. The person (e.g. the name) should be a reference to an external entity (e.g. the `Owner`, `owner_id`)
 - Whenever I want to confirm or complete a transfer operation there is no check at aggregate level (e.g. from the payer perspective: is there a `TransferOperationOpened` when the aggregate receive a `CompleteTransferOperation`?)
 - Should the `CommandBus` [raise exceptions](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/FakeBus.cs)?
 - What about the idea to use a `ProcessId` (or `CommandId`) to identify or remember the [originator of the command in the event](http://danielwhittaker.me/2014/10/18/6-code-smells-cqrs-events-avoid/)?
