@@ -63,12 +63,15 @@ defmodule Bank.AccountTest do
         }
 
       assert account |> contain_change?(expected_change)
+      assert account.available_balance == 100
+      assert account.account_balance == 0
     end
 
     test "produces a TransferOperationDeclined due insufficient funds" do
       account =
         %Account{}
         |> Account.new("Joe")
+        |> Account.deposit(50)
         |> Account.transfer(100, "A_PAYEE", "AN_OPERATION_ID")
 
       expected_change =
@@ -81,6 +84,8 @@ defmodule Bank.AccountTest do
         }
 
       assert account |> contain_change?(expected_change)
+      assert account.available_balance == 50
+      assert account.account_balance == 50
     end
   end
 
@@ -102,6 +107,29 @@ defmodule Bank.AccountTest do
       assert account |> contain_change?(expected_change)
       assert account.available_balance == 100
       assert account.account_balance == 100
+    end
+  end
+
+  describe "#complete_transfer_operation" do
+    test "produces a TransferOperationCompleted and update the balance" do
+      account =
+        %Account{}
+        |> Account.new("Joe")
+        |> Account.deposit(100)
+        |> Account.transfer(50, "A_PAYEE", "AN_OPERATION_ID")
+        |> Account.complete_transfer_operation(50, "A_PAYEE", "AN_OPERATION_ID")
+
+      expected_change =
+        %Events.TransferOperationCompleted{
+          id: "Joe",
+          amount: 50,
+          payee: "A_PAYEE",
+          operation_id: "AN_OPERATION_ID"
+        }
+
+      assert account |> contain_change?(expected_change)
+      assert account.available_balance == 50
+      assert account.account_balance == 50
     end
   end
 

@@ -56,6 +56,18 @@ defmodule Bank.Account do
     apply_new_event(new_event, state)
   end
 
+  def complete_transfer_operation(%__MODULE__{id: id} = state, amount, payee, operation_id) do
+    new_event =
+      %Events.TransferOperationCompleted{
+        id: id,
+        amount: amount,
+        payee: payee,
+        operation_id: operation_id
+      }
+
+    apply_new_event(new_event, state)
+  end
+
   defp apply_new_event(event, state) do
     new_state = apply_event(event, state)
 
@@ -101,5 +113,9 @@ defmodule Bank.Account do
       available_balance: state.available_balance + amount,
       account_balance: state.account_balance + amount
     }
+  end
+
+  defp apply_event(%Events.TransferOperationCompleted{amount: amount}, state) do
+    %__MODULE__{state | available_balance: state.available_balance - amount}
   end
 end

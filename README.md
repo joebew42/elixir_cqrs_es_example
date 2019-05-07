@@ -24,8 +24,11 @@ mix test --only acceptance
 
 ## DOING
 
+- Add the `CompleteTransferOperation` command handler
+
 ## Questions & TODOs
 
+- Whenever I want to confirm or complete a transfer operation there is no check at aggregate level (e.g. from the payer perspective: is there a `TransferOperationOpened` when the aggregate receive a `CompleteTransferOperation`?)
 - Should the `CommandBus` [raise exceptions](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/FakeBus.cs)?
 - What about the idea to use a `ProcessId` (or `CommandId`) to identify or remember the [originator of the command in the event](http://danielwhittaker.me/2014/10/18/6-code-smells-cqrs-events-avoid/)?
 - How to deal with the state of the Process Manager when replaying events?
@@ -37,8 +40,6 @@ mix test --only acceptance
   - https://medium.com/@teivah/event-sourcing-and-concurrent-updates-32354ec26a4c
   - http://danielwhittaker.me/2014/09/29/handling-concurrency-issues-cqrs-event-sourced-system/
   - https://dzone.com/articles/the-good-of-event-sourcing-conflict-handling-repli
-- In order to reduce the concurrency exception, one solution could be to serialize the execution of commands related to the same aggregate id
-  - At the moment the TaskSupervisor is disabled
 - There is some duplicated code in the command handlers tests (e.g., `expect_never` and some aliases and imports)
 - Introduce the use of a GUID for the aggregateId
 - Could we consider to introduce an AccountRepository to hide the detail about the EventStore in the command handlers?
@@ -110,6 +111,8 @@ mix test --only acceptance
 
 ## TRASHED / NOT NEEDED
 
+- In order to reduce the concurrency exception, one solution could be to serialize the execution of commands related to the same aggregate id
+  - At the moment the TaskSupervisor is disabled
 - Should the `CommandHandler` return errors?
 - `Bank` will act as a client that will send commands
 - When handle the `deposit_money` command we should check if the `account` process is running
