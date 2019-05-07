@@ -24,18 +24,6 @@ mix test --only acceptance
 
 ## DOING
 
-- Create and example of how a money transfer between two bank accounts could be
-  - Introduce a `TransferOperationManager` ...
-    - Try to [separate the implementation from the domain logic](https://pragdave.me/blog/2017/07/13/decoupling-interface-and-implementation-in-elixir.html)
-      - `TransferOperationProcess` (implementation: GenServer + State)
-      - `TransferOperationManager` (domain logic)
-  - Now that I can send a `TransferOperationOpened` I could be able to finalize the transaction
-    - Should I use the concept of Process Managers ? Where we have a Process Manager for each operation_id?
-    - Is the money transfer a long running
-  - References about Process Manager
-    - [EIP](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html)
-    - [Process Manager and Events Flow](https://www.infoq.com/news/2017/07/process-managers-event-flows)
-
 ## Questions & TODOs
 
 - Should the `CommandBus` [raise exceptions](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/FakeBus.cs)?
@@ -67,6 +55,17 @@ mix test --only acceptance
 
 ## DONE
 
+- Create and example of how a money transfer between two bank accounts could be
+  - Introduce a `TransferOperationManager` ...
+    - Try to [separate the implementation from the domain logic](https://pragdave.me/blog/2017/07/13/decoupling-interface-and-implementation-in-elixir.html)
+      - `TransferOperationProcess` (implementation: GenServer + State)
+      - `TransferOperationManager` (domain logic)
+  - Now that I can send a `TransferOperationOpened` I could be able to finalize the transaction
+    - Should I use the concept of Process Managers ? Where we have a Process Manager for each operation_id?
+    - Is the money transfer a long running
+  - References about Process Manager
+    - [EIP](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html)
+    - [Process Manager and Events Flow](https://www.infoq.com/news/2017/07/process-managers-event-flows)
 - `CommandBus.publish` should be `send`, better to extract a behaviour for the commandbus
   - Maybe we don't need a command bus to subscribe on. Think about ...
 - Introduce the concept of `Account Balance` and `Available Balance`
