@@ -28,6 +28,8 @@ defmodule ElixirCqrsEsExample.Mixfile do
 
   defp deps do
     [
+      {:plug_cowboy, "~> 2.0"},
+      {:jason, "~> 1.1"},
       {:uuid, "~> 1.1"},
       {:mox, "~> 0.4", only: :test},
     ]

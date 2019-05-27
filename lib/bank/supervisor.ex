@@ -11,7 +11,8 @@ defmodule Bank.Supervisor do
       Bank.EventHandler,
       Bank.TransferOperationServer,
       Bank.InMemoryEventStore,
-      Bank.InMemoryAccountReadModel
+      Bank.InMemoryAccountReadModel,
+      Plug.Cowboy.child_spec(scheme: :http, plug: Bank.Http.Router, options: [port: 4001])
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

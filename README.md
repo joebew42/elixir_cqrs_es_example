@@ -22,12 +22,52 @@ mix test --include acceptance
 mix test --only acceptance
 ```
 
+## Run the application
+
+```
+iex -S mix
+```
+
+A server will listen at port `4001`
+
+Create an account via HTTP:
+
+```
+curl -v -X POST --data '{"name": "Foo"}' -H "Content-Type: application/json" http://localhost:4001/accounts
+```
+
+You can also use the [`Bank.Client`](lib/bank/client.ex) from `iex` to use the application:
+
+```
+iex(1)> alias Bank.Client
+Bank.Client
+iex(2)> Client.create_account("Foo")
+:ok
+iex(3)> Client.status("Foo")
+%{
+  account_balance: 0,
+  available_balance: 0,
+  id: "0b0924ad-b928-5633-9352-7b01bc2046cc",
+  name: "Foo"
+}
+iex(4)> Client.deposit("Foo", 100)
+:ok
+iex(5)> Client.status("Foo")
+%{
+  account_balance: 100,
+  available_balance: 100,
+  id: "0b0924ad-b928-5633-9352-7b01bc2046cc",
+  name: "Foo"
+}
+```
+
 ## DOING
 
 - Replace "Someone" with "A PAYER ID" or "A PAYEE ID"
 
 ## Questions & TODOs
 
+- Complete the HTTP
 - Replace `id` with `aggregate_id` (or `source_id`) in the `Event` definition
 - Probably the `EventHandler` is the [`AccountProjections`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
 - Add a new projection that provide the list of all the available accounts with the current account balance
@@ -61,6 +101,7 @@ mix test --only acceptance
 
 ## DONE
 
+- Introduce an HTTP layer to create an account :)
 - Introduce the use of a GUID for the aggregateId
   - In this case probably is the `Bank.Client` that have to generate the GUID based on the `name` (to guarantee the uniqueness of `name`)?
 - Update the `Account` view on `TransferOperationCompleted`
