@@ -69,7 +69,7 @@ defmodule Bank.AcceptanceTest do
     app = :elixir_cqrs_es_example
 
     Application.stop(app)
-    Application.start(app)
+    Application.ensure_all_started(app)
 
     :ok = Application.put_env(app, :command_bus, Bank.DefaultCommandBus)
     :ok = Application.put_env(app, :event_store, Bank.InMemoryEventStore)
