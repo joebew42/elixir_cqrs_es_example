@@ -12,7 +12,7 @@ defmodule Bank.Http.Router do
   post "/accounts" do
     %{"name" => name} = conn.body_params
 
-    account_id = UUID.uuid5(nil, name)
+    account_id = UUID.uuid5(:nil, name)
 
     command = %Commands.CreateAccount{
       account_id: account_id,
