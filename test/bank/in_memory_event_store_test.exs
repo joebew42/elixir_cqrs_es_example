@@ -23,6 +23,17 @@ defmodule Bank.InMemoryEventStoreTest do
     :ok
   end
 
+  describe "load_event_stream" do
+    test "return not found when there are no events" do
+      expect(AppendOnlyStore, :read, fn _ -> [] end)
+
+      result = EventStore.load_event_stream("AN_AGGREGATE_ID")
+
+      verify!(AppendOnlyStore)
+      assert result == {:error, :not_found}
+    end
+  end
+
   test "returns not found when there are no events" do
     result = EventStore.load_event_stream("AN_AGGREGATE_ID")
 

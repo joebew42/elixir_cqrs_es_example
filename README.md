@@ -63,10 +63,11 @@ iex(5)> Client.status("Foo")
 
 ## DOING
 
-
+- Decouple the `EventStore` from its storage implementation (`AppendOnlyStore`)
 
 ## Questions & TODOs
 
+- Introduce the `EventStoreConcurrencyException`
 - Complete the HTTP
 - Replace `id` with `aggregate_id` (or `source_id`) in the `Event` definition
 - Probably the `EventHandler` is the [`AccountProjections`](https://github.com/gregoryyoung/m-r/blob/master/SimpleCQRS/ReadModel.cs) that listen to some specific events in order to update the view (can we reuse the same pattern adopted for the `TransferOperation`s?)
