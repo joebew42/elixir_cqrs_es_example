@@ -63,7 +63,7 @@ iex(5)> Client.status("Foo")
 
 ## DOING
 
-- Replace "Someone" with "A PAYER ID" or "A PAYEE ID"
+
 
 ## Questions & TODOs
 
@@ -101,6 +101,7 @@ iex(5)> Client.status("Foo")
 
 ## DONE
 
+- Replace "Someone" with "A PAYER ID" or "A PAYEE ID"
 - Introduce an HTTP layer to create an account :)
 - Introduce the use of a GUID for the aggregateId
   - In this case probably is the `Bank.Client` that have to generate the GUID based on the `name` (to guarantee the uniqueness of `name`)?

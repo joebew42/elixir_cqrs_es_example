@@ -49,7 +49,7 @@ defmodule Bank.EventHandlerTest do
     |> expect(:find, fn("AN ID") -> {:ok, %{id: "AN ID", available_balance: 10, account_balance: 10}} end)
     |> expect(:save, fn %{id: "AN ID", available_balance: 10, account_balance: 0} -> :ok end)
 
-    publish(%Events.TransferOperationOpened{id: "AN ID", amount: 10, payee: "Someone", operation_id: "an operation id"})
+    publish(%Events.TransferOperationOpened{id: "AN ID", amount: 10, payee: "PAYEE ID", operation_id: "an operation id"})
 
     verify!(AccountReadModel)
   end
@@ -59,7 +59,7 @@ defmodule Bank.EventHandlerTest do
     |> expect(:find, fn("AN ID") -> {:ok, %{id: "AN ID", available_balance: 0, account_balance: 0}} end)
     |> expect(:save, fn %{id: "AN ID", available_balance: 10, account_balance: 10} -> :ok end)
 
-    publish(%Events.TransferOperationConfirmed{id: "AN ID", amount: 10, payer: "Someone", operation_id: "an operation id"})
+    publish(%Events.TransferOperationConfirmed{id: "AN ID", amount: 10, payer: "PAYER ID", operation_id: "an operation id"})
 
     verify!(AccountReadModel)
   end
@@ -69,7 +69,7 @@ defmodule Bank.EventHandlerTest do
     |> expect(:find, fn("AN ID") -> {:ok, %{id: "AN ID", available_balance: 100, account_balance: 50}} end)
     |> expect(:save, fn %{id: "AN ID", available_balance: 50, account_balance: 50} -> :ok end)
 
-    publish(%Events.TransferOperationCompleted{id: "AN ID", amount: 50, payee: "Someone", operation_id: "an operation id"})
+    publish(%Events.TransferOperationCompleted{id: "AN ID", amount: 50, payee: "PAYEE ID", operation_id: "an operation id"})
 
     verify!(AccountReadModel)
   end

@@ -12,13 +12,13 @@ defmodule Bank.CommandHandlers.TransferMoneyTest do
   test "nothing to transfer if the account does not exist" do
     EventStore
     |> expect(:load_event_stream, fn "AN ID" -> {:error, :not_found} end)
-    |> expect_never(:append_to_stream, fn "AN ID", 0, [%Events.TransferOperationOpened{id: "AN ID", amount: 50, payee: "Someone", operation_id: "an_operation_id"}] -> :ok end)
+    |> expect_never(:append_to_stream, fn "AN ID", 0, [%Events.TransferOperationOpened{id: "AN ID", amount: 50, payee: "PAYEE ID", operation_id: "an_operation_id"}] -> :ok end)
 
     command =
       %Commands.TransferMoney{
         account_id: "AN ID",
         amount: 50,
-        payee: "Someone",
+        payee: "PAYEE ID",
         operation_id: "an_operation_id"
       }
 
@@ -30,13 +30,13 @@ defmodule Bank.CommandHandlers.TransferMoneyTest do
   test "a transfer operation is opened when the account exist and has enough money" do
     EventStore
     |> expect(:load_event_stream, fn "AN ID" -> {:ok, 1, [%Events.AccountCreated{id: "AN ID", name: "A NAME"}, %Events.MoneyDeposited{id: "AN ID", amount: 100}]} end)
-    |> expect(:append_to_stream, fn "AN ID", 1, [%Events.TransferOperationOpened{id: "AN ID", amount: 50, payee: "Someone", operation_id: "an_operation_id"}] -> :ok end)
+    |> expect(:append_to_stream, fn "AN ID", 1, [%Events.TransferOperationOpened{id: "AN ID", amount: 50, payee: "PAYEE ID", operation_id: "an_operation_id"}] -> :ok end)
 
     command =
       %Commands.TransferMoney{
         account_id: "AN ID",
         amount: 50,
-        payee: "Someone",
+        payee: "PAYEE ID",
         operation_id: "an_operation_id"
       }
 

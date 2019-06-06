@@ -12,13 +12,13 @@ defmodule Bank.CommandHandlers.CompleteTransferOperationTest do
   test "a transfer operation is completed" do
     EventStore
     |> expect(:load_event_stream, fn "AN ID" -> {:ok, 0, [%Events.AccountCreated{id: "AN ID", name: "A NAME"}]} end)
-    |> expect(:append_to_stream, fn "AN ID", 0, [%Events.TransferOperationCompleted{id: "AN ID", amount: 50, payee: "Someone", operation_id: "an_operation_id"}] -> :ok end)
+    |> expect(:append_to_stream, fn "AN ID", 0, [%Events.TransferOperationCompleted{id: "AN ID", amount: 50, payee: "PAYEE ID", operation_id: "an_operation_id"}] -> :ok end)
 
     command =
       %Commands.CompleteTransferOperation{
         account_id: "AN ID",
         amount: 50,
-        payee: "Someone",
+        payee: "PAYEE ID",
         operation_id: "an_operation_id"
       }
 
